@@ -1,0 +1,18 @@
+{
+  "$schema": "https://dev.office.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "ita-user-attribute-manager-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/itaUserAttributeManager/ItaUserAttributeManagerWebPart.js",
+          "manifest": "./src/webparts/itaUserAttributeManager/ItaUserAttributeManagerWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "ItaUserAttributeManagerWebPartStrings": "lib/webparts/itaUserAttributeManager/loc/{locale}.js"
+  }
+}

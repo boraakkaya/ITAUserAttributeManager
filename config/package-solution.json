@@ -1,0 +1,12 @@
+{
+  "$schema": "https://dev.office.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "ita-user-attribute-manager-client-side-solution",
+    "id": "665c08e8-68dd-498b-885d-a426cfa3d857",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true
+  },
+  "paths": {
+    "zippedPackage": "solution/ita-user-attribute-manager.sppkg"
+  }
+}

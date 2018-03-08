@@ -1,0 +1,8 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "version": "1.4.1",
+    "libraryName": "ita-user-attribute-manager",
+    "libraryId": "665c08e8-68dd-498b-885d-a426cfa3d857",
+    "environment": "spo"
+  }
+}
