@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Tabs from './Tabs';
 import styles from '../webparts/itaUserAttributeManager/ItaUserAttributeManagerWebPart.module.scss';
 import Forms from './Forms';
-import FetchBox from '../../lib/Components/FetchBox';
+import FetchBox from './..//Components/FetchBox';
 
 interface MainComponentProps {
     isfetching:boolean;

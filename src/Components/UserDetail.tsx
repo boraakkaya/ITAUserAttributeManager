@@ -15,14 +15,15 @@ class UserDetail extends React.Component<UserDetailProps, UserDetailState> {
     constructor(props)
     {
         super(props);
-        this.state = {userPictureURL : ""}
+        var pictureModule = require('./../Assets/userthumbnail.jpg');
+        this.state = {userPictureURL : pictureModule}
         this.getUserPictureURL(props);
     }
     async getUserPictureURL(props)
     {
         var pictureURL = `${this.ctx.pageContext.site.absoluteUrl}/_layouts/15/userphoto.aspx?size=L&username=${props.user.emailAddress}`;
         await this.ctx.spHttpClient.get(pictureURL,SPHttpClient.configurations.v1).then((data)=>{
-            //console.log("Data is ", data);                        
+            console.log("Data is ", data);                        
             if(data.status == 200)
             {
                 this.setState({userPictureURL:pictureURL})

@@ -17,7 +17,7 @@ import { getCurrentContext } from '../../reducers/context';
 import { SPUser } from '@microsoft/sp-page-context';
 import { getLoggedInUser } from '../../Actions';
 import { ITabs } from '../../reducers/currentTab';
-import { isfetching } from '../../../lib/Actions';
+import { isfetching } from './../../Actions';
 
 export interface IItaUserAttributeManagerWebPartProps {
   description: string;

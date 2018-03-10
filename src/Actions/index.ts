@@ -1,6 +1,6 @@
 import {Environment,EnvironmentType} from '@microsoft/sp-core-library';
-import { IUserProfile } from '../../lib/Interfaces/IUserProfile';
-import { mockUsers } from '../../lib/Data/Mock';
+import { IUserProfile } from './../Interfaces/IUserProfile';
+import { mockUsers } from './../Data/Mock';
 const mockedLoggedInUser = mockUsers[1];
 export function getLoggedInUser()
 {
