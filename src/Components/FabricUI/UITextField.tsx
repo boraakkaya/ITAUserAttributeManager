@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {TextField, ITextFieldProps} from 'office-ui-fabric-react/lib/TextField';
+import {TextField, ITextFieldProps} from 'office-ui-fabric-react';
 import { WrappedFieldProps } from 'redux-form';
 import { autobind } from '@uifabric/utilities';
 import styles from '../../webparts/itaUserAttributeManager/ItaUserAttributeManagerWebPart.module.scss';

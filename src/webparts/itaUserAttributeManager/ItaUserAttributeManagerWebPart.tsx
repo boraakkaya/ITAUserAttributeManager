@@ -18,6 +18,7 @@ import { SPUser } from '@microsoft/sp-page-context';
 import { getLoggedInUser } from '../../Actions';
 import { ITabs } from '../../reducers/currentTab';
 import { isfetching } from './../../Actions';
+import FetchBox from '../../Components/FetchBox';
 
 export interface IItaUserAttributeManagerWebPartProps {
   description: string;
@@ -26,25 +27,27 @@ export interface IItaUserAttributeManagerWebPartProps {
 export default class ItaUserAttributeManagerWebPart extends BaseClientSideWebPart<IItaUserAttributeManagerWebPartProps> {
 
   public render(): void {
+    var storeState:any = store.getState();
+    var fetchStatus = storeState.isfetching;
     const element = <Provider store={store}>
-    <div>            
+    <div>      
       <MainComponent className={styles.maincomponent}/>
     </div>
   </Provider>;
   ReactDOM.render(element, this.domElement);
   }
-  protected onInit(): Promise<void> {
+  protected async onInit(): Promise<void> {
     console.log("Current Store : " , store.getState());
     (window as any).spfxContext = this.context;  //redux dev tools is crashing when adding context to state - too big JSON to handle
     (window as any).loggedInUser = this.context.pageContext.user;
     store.dispatch(isfetching(true));
-    store.dispatch(getLoggedInUser()).then(()=>{
+    await store.dispatch(getLoggedInUser()).then(()=>{
       console.log("Got Logged In User ..... ");
       store.dispatch({type:ITabs.userTab,data:""});
       store.dispatch(isfetching(false));
     }) 
     return super.onInit();
-  } 
+  }  
   protected get dataVersion(): Version {
     return Version.parse('1.0');
   }  

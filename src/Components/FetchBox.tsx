@@ -8,7 +8,7 @@ export interface FetchBoxProps {
     message?:string;
 };
 export interface FetchBoxState {};
-class FetchBox extends React.Component<FetchBoxProps> {
+export default class FetchBox extends React.Component<FetchBoxProps> {
     static defaultProps = {message:"Please wait while content loads..."}
     constructor(props)
     {
@@ -20,4 +20,3 @@ class FetchBox extends React.Component<FetchBoxProps> {
                 </div>);
     }    
 }
-export default FetchBox;

@@ -11,11 +11,9 @@ interface MainComponentProps {
 interface MainComponentState {}
 class MainComponent extends React.Component<MainComponentProps, MainComponentState> {
     public render(): JSX.Element {
-        return (<div className={styles.maincomponent}>
-        {this.props.isfetching && <FetchBox/>}
-        {!this.props.isfetching && <div><Tabs/>
-            <Forms/></div>}
-            
+        return (<div className={styles.maincomponent}>        
+        <Tabs/>
+        <Forms />
         </div>);
     }
 }

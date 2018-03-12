@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Label } from 'office-ui-fabric-react/lib/Label';
-import {TextField, ITextFieldProps} from 'office-ui-fabric-react/lib/TextField';
+import {TextField, ITextFieldProps, Label} from 'office-ui-fabric-react';
 import { WrappedFieldProps } from 'redux-form';
 import { IMailingAddress } from '../../Interfaces/IUserProfile';
 import { autobind } from '@uifabric/utilities';

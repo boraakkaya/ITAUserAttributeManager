@@ -38,11 +38,6 @@ class CustomFieldArray2 extends React.Component<CustomFieldArray2Props & Wrapped
         </div>);
     }
 }
-const CustomSelectBox = (props)=>(
-    <div>
-        Hello 
-    </div>
-)
 const mapStateToProps = (state, ownProps) => {
     return {
         values: state.form.userForm.values.countrySpecialities

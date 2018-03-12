@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Field, WrappedFieldProps } from 'redux-form';
 import styles from '../../webparts/itaUserAttributeManager/ItaUserAttributeManagerWebPart.module.scss';
 import { IContact, ICertification } from '../../Interfaces/IUserProfile';
-import { TextField, ITextFieldProps } from 'office-ui-fabric-react/lib/TextField';
+import { TextField, ITextFieldProps } from 'office-ui-fabric-react';
 import { autobind } from '@uifabric/utilities';
 export interface CertificationInformationProps {
     fields:any;

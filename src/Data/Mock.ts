@@ -16,10 +16,10 @@ export const mockUsers: IUserProfile[] = [
         officeNumber: "19119",
         manager: { displayName: "Michael Brockman", email: "michael.brockman@trade.gov" },
         employeeID: "012345",
-        employeeType: EmployeeTypes.Contractor,
+        employeeType: EmployeeTypes.Intern,
         accountExpiration: new Date("06/15/2018"),
         countrySpecialities: ["France", "Germany", "Brazil", "Peru"],
-        industrySpecialities: ["Steel", "Auto", "Chemistry"],
+        industrySpecialities: ["Food Processing & Packaging", "Industrial Equipment & Supplies", "Textiles, Apparel & Sporting Goods"],
         CSATCompletion: new Date("02/05/2018"),
         emergencyContactInformation: [{ firstName: "Jane", lastName: "Doe", emailAddress: "jane.doe@gmail.com", phoneNumber: "555-444-3322" }, { firstName: "Berry", lastName: "Stone", emailAddress: "berry.stone@hotmail.com", phoneNumber: "888-777-4466" }],
         education: [{ schoolName: "Harvard University", degree: "MBA", year: "2002" }, { schoolName: "Yale University", degree: "Bachelors", year: "2010" }],
@@ -43,7 +43,7 @@ export const mockUsers: IUserProfile[] = [
         employeeType: EmployeeTypes.RegularEmployee, //mngr
         accountExpiration: new Date("05/20/2019"), //mngr
         countrySpecialities: ["Italy", "Spain", "Portugal", "Greece"], //user
-        industrySpecialities: ["Textile", "Energy", "Health"], //user
+        industrySpecialities: ["Agribusiness", "Architecture & Engineering", "Health Technologies"], //user
         CSATCompletion: new Date("01/01/2018"), //only show both user and mngr read-only
         emergencyContactInformation: [{ firstName: "Demi", lastName: "Dorotyh", emailAddress: "demi.dorothy@gmail.com", phoneNumber: "111-222-3344" }, { firstName: "Brian", lastName: "McCarty", emailAddress: "brian.mccarty@hotmail.com", phoneNumber: "666-111-3388" }], //user update and visible to manager only
         education: [{ schoolName: "UCLA", degree: "Bachelors", year: "1998" }], //user 
@@ -67,7 +67,7 @@ export const mockUsers: IUserProfile[] = [
         employeeType: EmployeeTypes.Contractor,
         accountExpiration: new Date("05/20/2019"),
         countrySpecialities: ["Turkey", "Spain", "United Kingdom", "Canada"],
-        industrySpecialities: ["Energy", "Automotive"],
+        industrySpecialities: ["Food Processing & Packaging", "Civil Nuclear Guide to Exporting"],
         CSATCompletion: new Date("01/01/2018"),
         emergencyContactInformation: [{ firstName: "Andrew", lastName: "Smith", emailAddress: "andrew.smith@gmail.com", phoneNumber: "666-777-8844" }, { firstName: "John", lastName: "Haley", emailAddress: "john.haley@hotmail.com", phoneNumber: "444-321-4567" }],
         education: [{ schoolName: "Mersin University", degree: "Bachelors", year: "2002" }],

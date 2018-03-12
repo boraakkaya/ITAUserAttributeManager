@@ -13,43 +13,22 @@ import { EmergencyContactInformation } from './FabricUI/EmergencyContactInformat
 import { EducationInformation } from './FabricUI/EducationInformation';
 import { CertificationInformation } from './FabricUI/CertificationInformation';
 import CustomFieldArray2 from './FabricUI/CustomFieldArray2';
+import { Button } from 'office-ui-fabric-react';
+import CustomFieldArray3 from './FabricUI/CustomFieldArray3';
 interface UserFormProps {
     currentTab:string;
     loggedInUser:IUserProfile;
     isfetching:boolean;
-    initialize:(IUserProfile)=>{};
-    initialValues:IUserProfile;
+    initialize:(IUserProfile)=>{};    
     
 };
 interface UserFormState {};
 class UserForm extends React.Component<UserFormProps, UserFormState> {    
+    
     componentWillMount()
     {
-        console.log("Component Will Mount");
         this.props.initialize(this.props.loggedInUser);
     }
-    componentWillReceiveProps(a,b)
-    {
-        console.log("Component Will Receive Props");
-    }
-    componentDidMount()
-    {
-        console.log("Component Did Mount");
-    }
-    componentDidUpdate()
-    {
-        console.log("Component Did Update");
-    }
-    componentWillUnmount()
-    {
-        console.log("Component Will Unmount");
-
-    }
-    componentWillUpdate()
-    {
-        console.log("Component Will Update");
-    }
-    
     public render(): JSX.Element {  
              
         return (<div className={styles.forms}>
@@ -60,10 +39,10 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                 
                 <div>
                 <div>
-                <div><b>Employee ID</b></div><div style={{display:"inline-block"}}>{this.props.initialValues.employeeID} </div>
+                <div><b>Employee ID</b></div><div style={{display:"inline-block"}}>{this.props.loggedInUser.employeeID} </div>
                 </div>
                 <div>
-                <div><b>Manager</b></div><div style={{display:"inline-block"}}>{this.props.initialValues.manager.displayName} </div>
+                <div><b>Manager</b></div><div style={{display:"inline-block"}}>{this.props.loggedInUser.manager.displayName} </div>
                 </div>
                 <form>
                 <div className={styles.formsection}>
@@ -89,7 +68,7 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                 <div className={styles.formsection}>
                     <h1>Industry Specialities</h1>
                     <div>
-                    <FieldArray name="industrySpecialities" component={CustomFieldArray}  props={{title:"Industry Specialities"}}/>
+                    <FieldArray name="industrySpecialities" component={CustomFieldArray3}  props={{title:"Industry Specialities"}}/>
                     </div>
                 </div>
 
@@ -110,7 +89,10 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                     <div>
                     <FieldArray name="certifications" component={CertificationInformation}  props={{title:"Certification Information"}}/>
                     </div>
-                </div>   
+                </div>
+                <div className={styles.buttonsbar}>
+                <Button text="Update My Profile" />
+                </div>  
           </form>
           </div>
           </div>}
@@ -121,13 +103,11 @@ const mapStateToProps = (state, ownProps) => {
     return {
         currentTab:state.currentTab,
         loggedInUser:state.loggedInUser,
-        isfetching:state.isfetching,
-        initialValues: state.loggedInUser,        
+        isfetching:state.isfetching
     }
 }
 export default reduxForm({
     form:'userForm',
     destroyOnUnmount: false, // <------ preserve form data
-  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
-  //initialValues : (store.getState() as any).loggedInUser
+    forceUnregisterOnUnmount: true, // <------ unregister fields on unmount    
 })(connect(mapStateToProps)(UserForm))

@@ -283,6 +283,27 @@
         border-radius: 20px;
         cursor: pointer;  
       }
+      .readonlyelement
+      {
+        padding-left: 12px;
+        line-height: 36px;
+        background-color: antiquewhite;
+        margin-bottom: 4px;
+      }
+    }
+    .buttonsbar
+      {
+      button[type=button]
+      {
+        background-color: #0075C7;
+        color: #fff;      
+        border:1px solid #cccc;
+        border-radius: 20px;
+        height: 37px;
+        width: 185px;
+        text-align: center;
+
+      }
     }
   }
 }
