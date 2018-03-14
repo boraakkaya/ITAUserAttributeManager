@@ -25,7 +25,6 @@ export interface IItaUserAttributeManagerWebPartProps {
 }
 
 export default class ItaUserAttributeManagerWebPart extends BaseClientSideWebPart<IItaUserAttributeManagerWebPartProps> {
-
   public render(): void {
     var storeState:any = store.getState();
     var fetchStatus = storeState.isfetching;

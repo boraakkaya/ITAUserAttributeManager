@@ -1,10 +1,12 @@
 export interface IUserProfile
 {
     firstName:string;
-    middleName:string;
+    middleName?:string;
     lastName:string;
-    suffix:string;
+    suffix?:string;
     workPhone:string;
+    jobTitle:string;
+    department:string;
     cellPhone:string;
     emailAddress:string;
     officeRegion:string;
@@ -22,6 +24,7 @@ export interface IUserProfile
     emergencyContactInformation:Array<IContact>;
     education:Array<IEducation>;
     certifications:Array<ICertification>;
+    directReports?:IUser[];
 
 }
 export interface IMailingAddress

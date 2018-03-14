@@ -78,6 +78,7 @@ export class ITAPeoplePicker extends React.Component<ITAPeoplePickerProps, ITAPe
         };
     }
     public render(): JSX.Element {
+        console.log("Rendering People Picker", this.props.defaultItems);
         return (
             <CompactPeoplePicker
                 onResolveSuggestions={this._onFilterChanged}
@@ -90,6 +91,7 @@ export class ITAPeoplePicker extends React.Component<ITAPeoplePickerProps, ITAPe
                 //onValidateInput={ this._validateInput }
                 itemLimit={this.props.itemLimit ? this.props.itemLimit : 20}
                 defaultSelectedItems = {this.props.defaultItems != undefined ? this.props.defaultItems : []}
+                selectedItems = {this.props.defaultItems != undefined ? this.props.defaultItems : []}                
                 />
         );
     }

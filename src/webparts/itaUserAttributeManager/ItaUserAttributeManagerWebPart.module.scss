@@ -295,15 +295,52 @@
       {
       button[type=button]
       {
-        background-color: #0075C7;
+        background-color: #14635f;
         color: #fff;      
-        border:1px solid #cccc;
-        border-radius: 20px;
+        border:1px solid #cccc;        
         height: 37px;
         width: 185px;
         text-align: center;
 
       }
+    }    
+  } 
+}
+:global
+{
+  .modalcontainer
+    {
+      width:400px;
+      height: 500px;
+      overflow-y: auto;
+      margin: 350px auto;
+      padding: 15px;
+      .modalheader
+      {
+        font-size: 25px;
+        background-color: #14635f;
+        padding: 5px 10px;
+        color:#fff;        
+      }
+      .modalbody
+        {
+          font-size: 14px;
+          padding-top: 10px;
+          .modalitem
+          {
+            line-height: 22px;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+          }
+          .modalitem:hover
+          {
+            background-color: #b1b1b1;
+          }
+        }
     }
-  }
+    .ms-Button-label
+    {
+      font-weight: normal;
+    }
 }

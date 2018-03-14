@@ -7,7 +7,7 @@ export interface UITextFieldProps {
     required?:boolean
     errorMessage?:string;
     label:string;
-    input:{value:any,label:any}
+    input:{value:any,label:any,onChange:(v)=>{}}
     meta:{}
 };
 export interface P extends UITextFieldProps, WrappedFieldProps {}
@@ -16,7 +16,7 @@ class UITextField extends React.Component<P> {
     defaultProps={required:false}
     public render(): JSX.Element {
         return (
-            <TextField label={this.props.label} required={this.props.required} underlined {...this.props.input} {...this.props.meta} defaultValue=""  validateOnLoad={false} validateOnFocusIn={false} validateOnFocusOut={true} onGetErrorMessage={this.setErrorMessage}   />
+            <TextField label={this.props.label} required={this.props.required} underlined {...this.props.input} {...this.props.meta}  validateOnLoad={false} validateOnFocusIn={false} validateOnFocusOut={true} onGetErrorMessage={this.setErrorMessage} onChanged={(v)=>{this.props.input.onChange(v)}}  />
         );
     }
     @autobind

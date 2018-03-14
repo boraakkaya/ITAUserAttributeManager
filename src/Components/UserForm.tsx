@@ -39,10 +39,16 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                 
                 <div>
                 <div>
-                <div><b>Employee ID</b></div><div style={{display:"inline-block"}}>{this.props.loggedInUser.employeeID} </div>
+                <div>Employee ID: {this.props.loggedInUser.employeeID} </div>
                 </div>
                 <div>
-                <div><b>Manager</b></div><div style={{display:"inline-block"}}>{this.props.loggedInUser.manager.displayName} </div>
+                <div>Manager: {this.props.loggedInUser.manager.displayName} </div>
+                </div>
+                <div>
+                <div>Department: {this.props.loggedInUser.department} </div>
+                </div>
+                <div>
+                <div>Job Title: {this.props.loggedInUser.jobTitle} </div>
                 </div>
                 <form>
                 <div className={styles.formsection}>

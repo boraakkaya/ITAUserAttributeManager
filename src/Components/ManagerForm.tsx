@@ -10,6 +10,7 @@ import UserDetail from './UserDetail';
 import { ITAPeoplePicker, ITAPersonaProps } from './ITAPeoplePicker';
 import store from '../Store';
 import { getSelectedUser, emptySelectedUser } from '../Actions';
+import Modal from 'office-ui-fabric-react/lib/Modal';
 
 interface ManagerFormProps {
     currentTab:string;
@@ -17,34 +18,82 @@ interface ManagerFormProps {
     isfetching:boolean;
     change:any;
     selectedUser:IUserProfile;
-    userForm:IUserProfile;
+    selectedUserForm:IUserProfile;
+    initialize:(IUserProfile)=>{};
 };
 
-interface ManagerFormState {};
+interface ManagerFormState {
+    showModalDirectReports:boolean;
+};
 
 class ManagerForm extends React.Component<ManagerFormProps, ManagerFormState> {
+
     pickerDefault:ITAPersonaProps[] = []
+    constructor(props)
+    {        
+        super(props);
+        console.log("Constructor");
+        this.state={showModalDirectReports:false};
+    }
     componentWillMount()
     {
-        if(this.props.selectedUser.emailAddress != undefined)
+        console.log("Component Will Mount");
+    }
+    
+    componentWillUpdate(props,state,ctx)
+    {
+        console.log("Component Will Update");
+        if(props.selectedUser.emailAddress != undefined)
         {
-        this.pickerDefault.push({primaryText:this.props.selectedUser.firstName + " "  + this.props.selectedUser.lastName,
-    secondaryText: this.props.selectedUser.emailAddress,
-imageUrl: `https://boraakkaya.sharepoint.com/_layouts/15/userphoto.aspx?size=M&username=${this.props.selectedUser.emailAddress}`, imageInitials:"JD", tertiaryText: 'In a meeting',
-optionalText: 'Available at 4:00pm',userID:1})
+        //    this.pickerDefault = [];
+        this.pickerDefault=[{primaryText:props.selectedUser.firstName + " "  + props.selectedUser.lastName,
+    secondaryText: props.selectedUser.emailAddress,
+imageUrl: `https://boraakkaya.sharepoint.com/_layouts/15/userphoto.aspx?size=M&username=${props.selectedUser.emailAddress}`,userID:1}];
+console.log("PickerDefault is : ",this.pickerDefault);
+        }
+        else
+        {
+            this.pickerDefault = [];
         }
     }
-
     public render(): JSX.Element {
+        
         console.log("Re-rendering!!", this.props);
-        let accountExpirationDate = this.props.userForm.accountExpiration;
+        let accountExpirationDate = this.props.selectedUser.accountExpiration;
         return (<div className={styles.forms}>
             <h2>Update Employee Profile</h2>            
             <div>
                 <div>
                     <br/>
                     <span>Select Direct Report Employee</span>
+                <div>
+                <div style={{width:"350px",display:"block"}}>
                 <ITAPeoplePicker defaultItems={this.pickerDefault} spContext={(window as any).spfxContext} onChange={(a: ITAPersonaProps[])=>{this.handleEmployeePickerChange(a)}} itemLimit={1}  />
+                </div>
+                <div style={{width:"150px",display:"block",marginTop:"5px"}}>
+                <Button styles={{label:{fontWeight:"normal"}}} style={{backgroundColor:"#06B2AA",color:"#fff",padding:"3px 10px",width:"200px"}} text="View All Direct Reports" onClick={()=>{this.setState({showModalDirectReports:true})}} />
+                </div>
+                </div>
+                <Modal
+          isOpen={ this.state.showModalDirectReports }
+          onDismiss={ this._closeModalDirectReports }
+          isBlocking={ false }
+          containerClassName="modalcontainer"
+        >
+          <div className="modalheader">
+            <span>All Direct Reports</span>
+          </div>
+          <div className="modalbody">
+            {this.props.loggedInUser.directReports.map((item,index)=>{
+                return <div className="modalitem" onClick={()=>{
+                    store.dispatch(getSelectedUser(item.email)).then(()=>{
+                        this.props.initialize(this.props.selectedUser);
+                        this.setState({showModalDirectReports:false});
+                    });
+                }}>{item.displayName}</div>
+            })}
+          </div>
+        </Modal>
                 </div>
                 {this.props.isfetching && <FetchBox />}
                 {this.props.selectedUser.emailAddress != undefined  && !this.props.isfetching && <div>
@@ -63,6 +112,10 @@ optionalText: 'Available at 4:00pm',userID:1})
                     <div style={{paddingLeft:"12px", margin:"10px 0px"}}>                    
                     <Field name="employeeType" component={Dropdown} label="Employee Type" props={{options:[{key:"Regular Employee",text:"Regular Employee"},{key:"Contractor",text:"Contractor"},{key:"Intern",text:"Intern"}],defaultSelectedKey:this.props.selectedUser.employeeType == undefined ? undefined : this.props.selectedUser.employeeType,onChanged:(e)=>{console.log("EEEEEEEEEEE ",e);this.props.change("employeeType",e.text);}}} />                    
                     </div>
+
+                    <Field name="jobTitle" component={UITextField} type="text"  label="Job Title" props={{errorMessage:"Required",required:true}}  />
+
+                    <Field name="department" component={UITextField} type="text"  label="Department" props={{errorMessage:"Required",required:true}}  />
 
                     <div style={{paddingLeft:"12px", margin:"0px 0px 10px 0px"}}>   
                     Manager                 
@@ -157,18 +210,28 @@ optionalText: 'Available at 4:00pm',userID:1})
     }
 
     @autobind
+    _closeModalDirectReports()
+    {
+        this.setState({showModalDirectReports:false});
+    }
+    @autobind
     handleEmployeePickerChange(user:ITAPersonaProps[])
     {
+        console.log("On Handle Employee Picker Change");
         if(user.length > 0)
         {
         let pickerSelection = user[0];
         let pickerEmail = pickerSelection.secondaryText;
-        store.dispatch(getSelectedUser(pickerEmail));
+        store.dispatch(getSelectedUser(pickerEmail)).then(()=>{
+            this.props.initialize(this.props.selectedUser);
+        });
+        
         }
         else
         {
             //empty picker
             emptySelectedUser();
+            this.props.initialize({});
         }
     }
 }
@@ -177,12 +240,11 @@ const mapStateToProps = (state, ownProps) => {
         currentTab:state.currentTab,
         loggedInUser:state.loggedInUser,
         isfetching:state.isfetching,
-        selectedUser:state.selectedUser,
-        userForm: state.form.userForm.values
+        selectedUser:state.selectedUser
     }
 }
 export default reduxForm({
-    form:'userForm',
+    form:'selectedUserForm',
     destroyOnUnmount: false, // <------ preserve form data
     forceUnregisterOnUnmount: true, // <------ unregister fields on unmount    
 })(connect(mapStateToProps)(ManagerForm))
