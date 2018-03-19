@@ -57,6 +57,7 @@ export interface ITAPeoplePickerProps {
      */
     onChange: (a: ITAPersonaProps[]) => any;
     defaultItems?: ITAPersonaProps[];
+    selectedItems?:ITAPersonaProps[];
 }
 export interface ITAPeoplePickerState {
     peopleList: ITAPersonaProps[];
@@ -90,8 +91,8 @@ export class ITAPeoplePicker extends React.Component<ITAPeoplePickerProps, ITAPe
                 //onRemoveSuggestion={ this._onRemoveSuggestion }
                 //onValidateInput={ this._validateInput }
                 itemLimit={this.props.itemLimit ? this.props.itemLimit : 20}
+                selectedItems = {this.props.selectedItems}
                 defaultSelectedItems = {this.props.defaultItems != undefined ? this.props.defaultItems : []}
-                selectedItems = {this.props.defaultItems != undefined ? this.props.defaultItems : []}                
                 />
         );
     }

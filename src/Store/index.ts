@@ -8,6 +8,7 @@ import { currentTab } from '../reducers/currentTab';
 import { loggedInUser } from '../reducers/loggedInUser';
 import { isfetching } from '../reducers/isfetching';
 import {selectedUser} from '../reducers/selectedUser';
+import {itaTermStore} from '../reducers/itaTermStore';
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const loggerMiddleware = createLogger();  //Remember to remove logger for production 
 const reducers = combineReducers({
@@ -15,7 +16,8 @@ const reducers = combineReducers({
   currentTab : currentTab,
   loggedInUser:loggedInUser,
   isfetching:isfetching,
-  selectedUser:selectedUser 
+  selectedUser:selectedUser,
+  itaTermStore:itaTermStore 
 });
 //const store =  createStore(reducers,composeWithDevTools({serialize:undefined})(applyMiddleware(thunkMiddleware,loggerMiddleware)));
 const store =  createStore(reducers,{},composeEnhancers(applyMiddleware(thunkMiddleware,loggerMiddleware)));

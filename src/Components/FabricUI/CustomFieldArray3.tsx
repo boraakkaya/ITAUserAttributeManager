@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Field, WrappedFieldProps } from 'redux-form';
 import styles from '../../webparts/itaUserAttributeManager/ItaUserAttributeManagerWebPart.module.scss';
 import { autobind } from '@uifabric/utilities';
+import store from '../../Store';
 export interface CustomFieldArray3Props {
     fields:any;
     meta:any;
     title:string;
 };
-import {Industries} from './../../Data/Industries';
+//import {Industries} from './../../Data/Industries';
 export interface CustomFieldArray3State {};
 const deleteIcon = require('./../../Assets/delete.png');
 class CustomFieldArray3 extends React.Component<CustomFieldArray3Props & WrappedFieldProps, CustomFieldArray3State> {
@@ -36,11 +37,17 @@ export interface IndustryPickerState {
     suggestions:string[]
 };
 export class IndustryPicker extends React.Component<IndustryPickerProps, IndustryPickerState> {
+    industries =[];
     constructor()
     {
         super();
         console.log("In Constructor");
         this.state={suggestions:[]};
+        var storeState:any = store.getState();
+        var industriesTerms = storeState.itaTermStore.ITATermGroupList[0].TermSets[1].Terms;
+        industriesTerms.map((industry)=>{
+            this.industries.push(industry.Name);
+        })
     }
     public render(): JSX.Element {
         return (<div style={{display:"inline"}}>
@@ -72,7 +79,7 @@ export class IndustryPicker extends React.Component<IndustryPickerProps, Industr
     updateSuggestions(term:string)
     {
         console.log("On Update Suggestions")
-        let suggestions = Industries.filter((industry,index)=>{
+        let suggestions = this.industries.filter((industry,index)=>{
             return industry.toLowerCase().indexOf(term.toLowerCase())>-1 ? true : false;
         })
         this.setState({suggestions:suggestions});        

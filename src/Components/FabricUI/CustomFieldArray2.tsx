@@ -3,16 +3,25 @@ import { Field, WrappedFieldProps } from 'redux-form';
 import styles from '../../webparts/itaUserAttributeManager/ItaUserAttributeManagerWebPart.module.scss';
 import { connect } from 'react-redux';
 import AutoComplete from './AutoComplete';
-import {countriesList} from './../../Data/Countries'
+//import {countriesList} from './../../Data/Countries'
 export interface CustomFieldArray2Props {
     fields:any;
     meta:any;
     title:string;
     values:string[];
+    termStorecountries : [{Name:string, Id:string}]
 };
 export interface CustomFieldArray2State {};
 const deleteIcon = require('./../../Assets/delete.png');
 class CustomFieldArray2 extends React.Component<CustomFieldArray2Props & WrappedFieldProps, CustomFieldArray2State> {
+    countriesList = [];
+    constructor(prop)
+    {
+        super(prop);
+        this.props.termStorecountries.map((country)=>{
+            this.countriesList.push(country.Name);
+        }); 
+    }
     public render(): JSX.Element {        
         return (<div className={styles.customselectorWrapper}>
             <div className={styles.customtextselector}>
@@ -32,7 +41,7 @@ class CustomFieldArray2 extends React.Component<CustomFieldArray2Props & Wrapped
                 }
             }} /></div> */}
             </div>
-            <AutoComplete autoCompleteArray={countriesList} handleChange={(val)=>{
+            <AutoComplete autoCompleteArray={this.countriesList} handleChange={(val)=>{
                 this.props.fields.push(val);                
             }} />
         </div>);
@@ -40,7 +49,10 @@ class CustomFieldArray2 extends React.Component<CustomFieldArray2Props & Wrapped
 }
 const mapStateToProps = (state, ownProps) => {
     return {
-        values: state.form.userForm.values.countrySpecialities
+        values: state.form.userForm.values.countrySpecialities,
+        termStorecountries: state.itaTermStore.ITATermGroupList[0].TermSets[0].Terms
+
+
     }
 }
 export default connect(mapStateToProps)(CustomFieldArray2);

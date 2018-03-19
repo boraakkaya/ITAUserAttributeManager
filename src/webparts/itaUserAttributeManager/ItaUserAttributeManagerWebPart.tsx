@@ -15,7 +15,7 @@ import store from './../../Store';
 import MainComponent from './../../Components/MainComponent';
 import { getCurrentContext } from '../../reducers/context';
 import { SPUser } from '@microsoft/sp-page-context';
-import { getLoggedInUser } from '../../Actions';
+import { getLoggedInUser, getTermStore } from '../../Actions';
 import { ITabs } from '../../reducers/currentTab';
 import { isfetching } from './../../Actions';
 import FetchBox from '../../Components/FetchBox';
@@ -42,8 +42,11 @@ export default class ItaUserAttributeManagerWebPart extends BaseClientSideWebPar
     store.dispatch(isfetching(true));
     await store.dispatch(getLoggedInUser()).then(()=>{
       console.log("Got Logged In User ..... ");
-      store.dispatch({type:ITabs.userTab,data:""});
-      store.dispatch(isfetching(false));
+      store.dispatch(getTermStore()).then(()=>{
+        store.dispatch({type:ITabs.userTab,data:""});
+        store.dispatch(isfetching(false));
+      })
+      
     }) 
     return super.onInit();
   }  

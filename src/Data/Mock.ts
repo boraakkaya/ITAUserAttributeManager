@@ -19,7 +19,7 @@ export const mockUsers: IUserProfile[] = [
         manager: { displayName: "Bora Akkaya", email: "boraakkaya@boraakkaya.onmicrosoft.com" },
         employeeID: "012345",
         employeeType: EmployeeTypes.Intern,
-        accountExpiration: new Date("06/15/2018"),
+        accountExpiration: "06/15/2018",
         countrySpecialities: ["France", "Germany", "Brazil", "Peru"],
         industrySpecialities: ["Food Processing & Packaging", "Industrial Equipment & Supplies", "Textiles, Apparel & Sporting Goods"],
         CSATCompletion: new Date("02/05/2018"),
@@ -46,7 +46,7 @@ export const mockUsers: IUserProfile[] = [
         manager: { displayName: "Bora Akkaya", email: "boraakkaya@boraakkaya.onmicrosoft.com" }, //mngr
         employeeID: "98765", //readonly display
         employeeType: EmployeeTypes.RegularEmployee, //mngr
-        accountExpiration: new Date("05/20/2019"), //mngr
+        accountExpiration: "05/20/2019", //mngr
         countrySpecialities: ["Italy", "Spain", "Portugal", "Greece"], //user
         industrySpecialities: ["Agribusiness", "Architecture & Engineering", "Health Technologies"], //user
         CSATCompletion: new Date("01/01/2018"), //only show both user and mngr read-only
@@ -73,7 +73,7 @@ export const mockUsers: IUserProfile[] = [
         manager: { displayName: "Michael Brockman", email: "michael.brockman@trade.gov" },
         employeeID: "5555",
         employeeType: EmployeeTypes.Contractor,
-        accountExpiration: new Date("05/20/2019"),
+        accountExpiration: "05/20/2019",
         countrySpecialities: ["Turkey", "Spain", "United Kingdom", "Canada"],
         industrySpecialities: ["Food Processing & Packaging", "Civil Nuclear Guide to Exporting"],
         CSATCompletion: new Date("01/01/2018"),

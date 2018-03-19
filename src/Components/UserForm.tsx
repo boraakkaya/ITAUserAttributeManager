@@ -13,8 +13,13 @@ import { EmergencyContactInformation } from './FabricUI/EmergencyContactInformat
 import { EducationInformation } from './FabricUI/EducationInformation';
 import { CertificationInformation } from './FabricUI/CertificationInformation';
 import CustomFieldArray2 from './FabricUI/CustomFieldArray2';
-import { Button } from 'office-ui-fabric-react';
+import { Button, autobind } from 'office-ui-fabric-react';
 import CustomFieldArray3 from './FabricUI/CustomFieldArray3';
+import { IWebPartContext } from '@microsoft/sp-webpart-base';
+import {HttpClient,HttpClientConfiguration} from '@microsoft/sp-http';
+import { isfetching, updateUserProfileAsync } from '../Actions';
+import Modal from 'office-ui-fabric-react/lib/Modal';
+
 interface UserFormProps {
     currentTab:string;
     loggedInUser:IUserProfile;
@@ -22,9 +27,15 @@ interface UserFormProps {
     initialize:(IUserProfile)=>{};    
     
 };
-interface UserFormState {};
+interface UserFormState {
+    ModalResponseStatus:{active:boolean, message:string};
+};
 class UserForm extends React.Component<UserFormProps, UserFormState> {    
-    
+    constructor(props)
+    {        
+        super(props);        
+        this.state={ModalResponseStatus:{active:false,message:""}};
+    }
     componentWillMount()
     {
         this.props.initialize(this.props.loggedInUser);
@@ -38,6 +49,27 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                 <UserDetail user={this.props.loggedInUser} />
                 
                 <div>
+
+                    <Modal
+          isOpen={ this.state.ModalResponseStatus.active }
+          onDismiss={ this._closeModalResponseStatus }
+          isBlocking={ false }
+          containerClassName="modalcontainer"
+        >
+          <div className="modalheader">
+            <span>{this.state.ModalResponseStatus.message}</span>
+          </div>
+          <div className="modalbody">
+            {this.state.ModalResponseStatus.message == "Success" ? <div>Successfully updated your user profile.</div> : <div>An error occured while updating user profile, please contact your SharePoint administrator.</div> }
+            <br/>
+            <br/>
+            <div className={styles.buttonsbar}>
+                <Button text="Close" onClick={(e)=>{this._closeModalResponseStatus()}} />  
+                </div>
+          </div>
+        </Modal>
+
+
                 <div>
                 <div>Employee ID: {this.props.loggedInUser.employeeID} </div>
                 </div>
@@ -97,12 +129,45 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                     </div>
                 </div>
                 <div className={styles.buttonsbar}>
-                <Button text="Update My Profile" />
+                <Button text="Update My Profile" onClick={()=>{this.updateUserProfile(this.props.loggedInUser.emailAddress)}}  />
                 </div>  
           </form>
           </div>
           </div>}
         </div>);
+    }
+    @autobind
+    getUserProfile()
+    {
+        // sample account i:0#.f|membership|bora@itadev.onmicrosoft.com
+        var ctx:IWebPartContext = (window as any).spfxContext;
+        ctx.httpClient.get('https://itauserprofilemanager.azurewebsites.net/api/GetUserProfile?account=i%3A0%23.f%7Cmembership%7Cbora%40itadev.onmicrosoft.com',HttpClient.configurations.v1,{}).then((response)=>{
+            //console.log("Response is ", response);
+            response.json().then((result)=>{
+                console.log("Result is ", result);
+            })
+        })
+    }
+    @autobind
+    _closeModalResponseStatus()
+    {
+        this.setState({ModalResponseStatus:{active:false,message:""}});
+
+    }
+    @autobind
+    updateUserProfile(userEmail)
+    {
+        var storeState:any = store.getState();
+        var data = storeState.form.userForm.values;
+        store.dispatch(isfetching(true));
+        
+        updateUserProfileAsync(userEmail,data).then((result)=>{
+            console.log("Async Result ", result);
+            this.setState({ModalResponseStatus:{active:true,message:result.status}});
+        }).catch((ex)=>{
+            this.setState({ModalResponseStatus:{active:true,message:"Error"}});
+        })
+        store.dispatch(isfetching(false));
     }
 }
 const mapStateToProps = (state, ownProps) => {

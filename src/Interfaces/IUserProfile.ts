@@ -17,10 +17,10 @@ export interface IUserProfile
     manager:IUser;
     employeeID:string;
     employeeType:EmployeeTypes;
-    accountExpiration: Date;
+    accountExpiration: string;
     countrySpecialities:Array<string>;
     industrySpecialities:Array<string>;
-    CSATCompletion:Date;
+    CSATCompletion:Date | any;
     emergencyContactInformation:Array<IContact>;
     education:Array<IEducation>;
     certifications:Array<ICertification>;

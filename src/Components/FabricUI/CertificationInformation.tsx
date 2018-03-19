@@ -37,8 +37,8 @@ export interface CertificationState {};
 export class Certification extends React.Component<CertificationProps, CertificationState> {
     public render(): JSX.Element {
         return (<div>            
-            <TextField underlined label="Organization" required  defaultValue={this.props.input.value.organization} onChanged={(e)=>{this.props.input.onChange({...this.props.input.value,schoolName:e})}} onGetErrorMessage={this.setErrorMessage} />
-            <TextField underlined label="Title" required defaultValue={this.props.input.value.title} onChanged={(e)=>{this.props.input.onChange({...this.props.input.value,degree:e})}} onGetErrorMessage={this.setErrorMessage} />
+            <TextField underlined label="Organization" required  defaultValue={this.props.input.value.organization} onChanged={(e)=>{this.props.input.onChange({...this.props.input.value,organization:e})}} onGetErrorMessage={this.setErrorMessage} />
+            <TextField underlined label="Title" required defaultValue={this.props.input.value.title} onChanged={(e)=>{this.props.input.onChange({...this.props.input.value,title:e})}} onGetErrorMessage={this.setErrorMessage} />
             <TextField underlined label="Year" required defaultValue={this.props.input.value.year} onChanged={(e)=>{this.props.input.onChange({...this.props.input.value,year:e})}} onGetErrorMessage={this.setErrorMessage} />
         </div>);
     }

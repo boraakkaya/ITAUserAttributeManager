@@ -8,9 +8,10 @@ import { IUserProfile } from '../Interfaces/IUserProfile';
 import FetchBox from './FetchBox';
 import UserDetail from './UserDetail';
 import { ITAPeoplePicker, ITAPersonaProps } from './ITAPeoplePicker';
-import store from '../Store';
-import { getSelectedUser, emptySelectedUser } from '../Actions';
+import { getSelectedUser, emptySelectedUser, isfetching, updateUserProfileAsync } from '../Actions';
 import Modal from 'office-ui-fabric-react/lib/Modal';
+import store from '../Store';
+import CustomDatePicker from './FabricUI/CustomDatePicker';
 
 interface ManagerFormProps {
     currentTab:string;
@@ -20,10 +21,12 @@ interface ManagerFormProps {
     selectedUser:IUserProfile;
     selectedUserForm:IUserProfile;
     initialize:(IUserProfile)=>{};
+    
 };
 
 interface ManagerFormState {
     showModalDirectReports:boolean;
+    ModalResponseStatus:{active:boolean, message:string};
 };
 
 class ManagerForm extends React.Component<ManagerFormProps, ManagerFormState> {
@@ -33,7 +36,7 @@ class ManagerForm extends React.Component<ManagerFormProps, ManagerFormState> {
     {        
         super(props);
         console.log("Constructor");
-        this.state={showModalDirectReports:false};
+        this.state={showModalDirectReports:false, ModalResponseStatus:{active:false,message:""}};
     }
     componentWillMount()
     {
@@ -59,16 +62,18 @@ console.log("PickerDefault is : ",this.pickerDefault);
     public render(): JSX.Element {
         
         console.log("Re-rendering!!", this.props);
-        let accountExpirationDate = this.props.selectedUser.accountExpiration;
+        var storeState:any = store.getState();
+        let accountExpirationDate = storeState.form.selectedUserForm ? storeState.form.selectedUserForm.values.accountExpiration : undefined;
+        
         return (<div className={styles.forms}>
-            <h2>Update Employee Profile</h2>            
+            <h2>Update Employee Profile</h2> 
             <div>
                 <div>
                     <br/>
                     <span>Select Direct Report Employee</span>
                 <div>
                 <div style={{width:"350px",display:"block"}}>
-                <ITAPeoplePicker defaultItems={this.pickerDefault} spContext={(window as any).spfxContext} onChange={(a: ITAPersonaProps[])=>{this.handleEmployeePickerChange(a)}} itemLimit={1}  />
+                <ITAPeoplePicker selectedItems={this.pickerDefault} defaultItems={this.pickerDefault} spContext={(window as any).spfxContext} onChange={(a: ITAPersonaProps[])=>{this.handleEmployeePickerChange(a)}} itemLimit={1}  />
                 </div>
                 <div style={{width:"150px",display:"block",marginTop:"5px"}}>
                 <Button styles={{label:{fontWeight:"normal"}}} style={{backgroundColor:"#06B2AA",color:"#fff",padding:"3px 10px",width:"200px"}} text="View All Direct Reports" onClick={()=>{this.setState({showModalDirectReports:true})}} />
@@ -94,6 +99,27 @@ console.log("PickerDefault is : ",this.pickerDefault);
             })}
           </div>
         </Modal>
+
+        <Modal
+          isOpen={ this.state.ModalResponseStatus.active }
+          onDismiss={ this._closeModalResponseStatus }
+          isBlocking={ false }
+          containerClassName="modalcontainer"
+        >
+          <div className="modalheader">
+            <span>{this.state.ModalResponseStatus.message}</span>
+          </div>
+          <div className="modalbody">
+            {this.state.ModalResponseStatus.message == "Success" ? <div>Successfully updated user profile.</div> : <div>An error occured while updating user profile, please contact your SharePoint administrator.</div> }
+            <br/>
+            <br/>
+            <div className={styles.buttonsbar}>
+                <Button text="Close" onClick={(e)=>{this._closeModalResponseStatus()}} />  
+                </div>
+          </div>
+        </Modal>
+
+
                 </div>
                 {this.props.isfetching && <FetchBox />}
                 {this.props.selectedUser.emailAddress != undefined  && !this.props.isfetching && <div>
@@ -104,7 +130,7 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     <h1>Account Information</h1>
                     <div>
                     <div className={styles.readonlyelement}>Employee ID : {this.props.selectedUser.employeeID}</div>
-                    <div className={styles.readonlyelement}>CSAT Completion Date : {this.props.selectedUser.CSATCompletion.toDateString()}</div>
+                    <div className={styles.readonlyelement}>CSAT Completion Date : {this.props.selectedUser.CSATCompletion != null ?this.props.selectedUser.CSATCompletion.toDateString() : ""}</div>
                     <div className={styles.readonlyelement}>Mailing Address : {this.props.selectedUser.mailingAddress.addressLine1} {this.props.selectedUser.mailingAddress.addressLine2} {this.props.selectedUser.mailingAddress.city} {this.props.selectedUser.mailingAddress.state} {this.props.selectedUser.mailingAddress.zipCode} {this.props.selectedUser.mailingAddress.country}</div>
                     <div className={styles.readonlyelement}>Cell Phone : {this.props.selectedUser.cellPhone}</div>              
                     <Field name="workPhone" component={UITextField} type="text"  label="Work Phone" props={{errorMessage:"Required",required:true}}  />
@@ -122,7 +148,8 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     <br/>
                     <Field name="manager" component={ITAPeoplePicker} label="Manager" props={{defaultItems: this.props.selectedUser.manager.displayName !="" ? [{primaryText:this.props.selectedUser.manager.displayName,secondaryText:this.props.selectedUser.manager.email}] : [] ,
                     spContext: (window as any).spfxContext,
-                    itemLimit:1,onChange:(e)=>{console.log("EEEEEEEEEEE ",e);
+                    itemLimit:1,onChange:(e)=>{
+                        console.log("EEEEEEEEEEEEEEEEEEEEEEEE",e)
                     if(e.length > 0)
                     {
                         this.props.change("manager",{displayName:e[0].primaryText,email:e[0].secondaryText});
@@ -135,15 +162,20 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     </div>
 
                     <div style={{paddingLeft:"12px", margin:"0px 0px 10px 0px"}}>
-                    <Field name="accountExpiration" component={DatePicker} label="Account Expiration" props={{
-                        value:accountExpirationDate,
+                    {/* <Field name="accountExpiration" component={DatePicker} label="Account Expiration" props={{
+                        //value:accountExpirationDate,
                         //value:new Date("10/10/2018"),
-                        onSelectDate:(e)=>{this.props.change("accountExpiration",e);console.log("Changed",e);}
-                    }} />                    
+                        onSelectDate:(e)=>{
+                            console.log(this.props);
+                            this.props.change("accountExpiration",e);console.log("Changed",e);}
+                    }} />  */}
+
+                    <Field name="accountExpiration" component={CustomDatePicker} label="Account Expiration" props={{
+                        onSelectDate:(e)=>{
+                            console.log(this.props);
+                            this.props.change("accountExpiration",e.toLocaleDateString());console.log("Changed",e.toLocaleDateString())}
+                    }} />                  
                     </div>
-
-                    
-
                     <Field name="officeRegion" component={UITextField} type="text"  label="Office Location" props={{errorMessage:"Required",required:true}}  />
                     <Field name="officeNumber" component={UITextField} type="text"  label="Office Number" props={{errorMessage:"Required",required:true}}  />
                     
@@ -170,16 +202,15 @@ console.log("PickerDefault is : ",this.pickerDefault);
                 <div className={styles.formsection}>
                     <h1>Education Information</h1>
                     <div>
-                    {this.props.selectedUser.education.map((education,index)=>{
+                    {this.props.selectedUser.education && this.props.selectedUser.education.map((education,index)=>{
                             return <div>{education.schoolName}, {education.degree}, {education.year} </div>
                         })}
-                    
                     </div>
                 </div>
                 <div className={styles.formsection}>
                     <h1>Certification Information</h1>
                     <div>
-                    {this.props.selectedUser.certifications.map((certification,index)=>{
+                    {this.props.selectedUser.certifications && this.props.selectedUser.certifications.map((certification,index)=>{
                             return <div>{certification.title}, {certification.organization}, {certification.year} </div>
                         })}
                     
@@ -188,16 +219,13 @@ console.log("PickerDefault is : ",this.pickerDefault);
                 <div className={styles.formsection}>
                     <h1>Emergency Contact Information</h1>
                     <div>
-                    {this.props.selectedUser.emergencyContactInformation.map((contact,index)=>{
+                    {this.props.selectedUser.emergencyContactInformation && this.props.selectedUser.emergencyContactInformation.map((contact,index)=>{
                             return <div>{contact.firstName} {contact.lastName}, {contact.phoneNumber}, {contact.emailAddress} </div>
                         })}
                     </div>
                 </div>
-
-
-
                 <div className={styles.buttonsbar}>
-                <Button text="Update Employee Profile" />  
+                <Button text="Update Employee Profile" onClick={(e)=>{this.updateUserProfile(this.props.selectedUser.emailAddress)}} />  
                 </div>
           </form>
           </div>
@@ -210,9 +238,31 @@ console.log("PickerDefault is : ",this.pickerDefault);
     }
 
     @autobind
+    updateUserProfile(userEmail)
+    {
+        var storeState:any = store.getState();
+        var data = storeState.form.selectedUserForm.values;
+        store.dispatch(isfetching(true));
+        
+        updateUserProfileAsync(userEmail,data).then((result)=>{
+            console.log("Async Result ", result);
+            this.setState({ModalResponseStatus:{active:true,message:result.status}});
+        }).catch((ex)=>{
+            this.setState({ModalResponseStatus:{active:true,message:"Error"}});
+        });
+        store.dispatch(isfetching(false));
+    }
+
+    @autobind
     _closeModalDirectReports()
     {
         this.setState({showModalDirectReports:false});
+    }
+    @autobind
+    _closeModalResponseStatus()
+    {
+        this.setState({ModalResponseStatus:{active:false,message:""}});
+
     }
     @autobind
     handleEmployeePickerChange(user:ITAPersonaProps[])
