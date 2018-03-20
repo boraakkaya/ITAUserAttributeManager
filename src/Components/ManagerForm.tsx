@@ -12,6 +12,7 @@ import { getSelectedUser, emptySelectedUser, isfetching, updateUserProfileAsync 
 import Modal from 'office-ui-fabric-react/lib/Modal';
 import store from '../Store';
 import CustomDatePicker from './FabricUI/CustomDatePicker';
+import OfficeLocations from './OfficeLocations';
 
 interface ManagerFormProps {
     currentTab:string;
@@ -176,7 +177,14 @@ console.log("PickerDefault is : ",this.pickerDefault);
                             this.props.change("accountExpiration",e.toLocaleDateString());console.log("Changed",e.toLocaleDateString())}
                     }} />                  
                     </div>
-                    <Field name="officeRegion" component={UITextField} type="text"  label="Office Location" props={{errorMessage:"Required",required:true}}  />
+                    <Field name="officeRegion" component={UITextField} type="text"  label="Office Region" props={{errorMessage:"Required",required:true}}  />
+
+                    <Field name="officeLocation" component={OfficeLocations} label="Office Location" props={{handleChange:(val)=>{
+                        this.props.change("officeLocation",val);
+                    }}} />
+
+
+
                     <Field name="officeNumber" component={UITextField} type="text"  label="Office Number" props={{errorMessage:"Required",required:true}}  />
                     
                     </div>

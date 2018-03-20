@@ -14,6 +14,7 @@ export const mockUsers: IUserProfile[] = [
         officeRegion: "North America - East",
         officeCountry: "U.S.A",
         officeState: "Washington D.C",
+        officeLocation:1,
         mailingAddress: { addressLine1: "Parkway Lane ", addressLine2: "Unit 1254", state: "VA",city:"Arlington", zipCode: "22200", country: "U.S.A" },
         officeNumber: "19119",
         manager: { displayName: "Bora Akkaya", email: "boraakkaya@boraakkaya.onmicrosoft.com" },
@@ -41,6 +42,7 @@ export const mockUsers: IUserProfile[] = [
         officeRegion: "North America - West", //mngr
         officeCountry: "U.S.A", //mngr
         officeState: "California", //mngr
+        officeLocation:7,
         mailingAddress: { addressLine1: "One Technology Dr.", addressLine2: "Apt #1424", state: "CA", city:"Oakland", zipCode: "84211", country: "U.S.A" },//user
         officeNumber: "3545", //mngr
         manager: { displayName: "Bora Akkaya", email: "boraakkaya@boraakkaya.onmicrosoft.com" }, //mngr
@@ -68,6 +70,7 @@ export const mockUsers: IUserProfile[] = [
         officeRegion: "North America - East",
         officeCountry: "U.S.A",
         officeState: "Washington D.C",
+        officeLocation:22,
         mailingAddress: { addressLine1: "950 N. Randolph St.", addressLine2: "Apt #1424 Arlington", state: "VA", city:"Arlington", zipCode: "22203", country: "U.S.A" },
         officeNumber: "11111",
         manager: { displayName: "Michael Brockman", email: "michael.brockman@trade.gov" },

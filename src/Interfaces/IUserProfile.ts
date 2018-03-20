@@ -12,6 +12,7 @@ export interface IUserProfile
     officeRegion:string;
     officeCountry:string;
     officeState:string;
+    officeLocation?:number;
     mailingAddress:IMailingAddress;
     officeNumber:string;
     manager:IUser;
