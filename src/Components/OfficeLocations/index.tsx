@@ -50,7 +50,7 @@ class OfficeLocations extends React.Component<OfficeLocationsProps, OfficeLocati
           containerClassName="modalcontainer"
         >
           <div className="modalheader">
-            <span>Please Select Country</span>
+            <span>Please Select {this.state.locationsModal.countrySelected == "" ? "Country" : this.state.locationsModal.stateSelected == "" ? "State" : this.state.locationsModal.citySelected == "" ? "City" : "Address" }</span>
           </div>
           <div className="modalbody">
            
@@ -78,13 +78,8 @@ class OfficeLocations extends React.Component<OfficeLocationsProps, OfficeLocati
                     {this.listAdresses(this.state.locationsModal.countrySelected,this.state.locationsModal.stateSelected,this.state.locationsModal.citySelected)}
 
             </div>
-            }
-
-
-            <br/>
-            <div className={styles.buttonsbar}>
-                <Button text="Close" onClick={(e)=>{this.closeLocationsModal()}} />  
-                </div>
+            }            
+                <Button className="closebutton" text="X" onClick={(e)=>{this.closeLocationsModal()}} />  
           </div>
         </Modal>
         </div>);
@@ -114,7 +109,7 @@ class OfficeLocations extends React.Component<OfficeLocationsProps, OfficeLocati
         let unique = this.removeDuplicates(locations,"country");
         return (<div>
         {unique.map((location,index)=>{
-            return <div onClick={()=>{this.setState({locationsModal:{...this.state.locationsModal,countrySelected:location.country}})}} >{location.country}</div>;
+            return <div key={index} className="modalitem" onClick={()=>{this.setState({locationsModal:{...this.state.locationsModal,countrySelected:location.country}})}} >{location.country}</div>;
         })}        
         </div>);
     }
@@ -127,7 +122,7 @@ class OfficeLocations extends React.Component<OfficeLocationsProps, OfficeLocati
         let unique = this.removeDuplicates(filtered,"state");
         return (<div>
             {unique.map((location,index)=>{
-                return <div onClick={()=>{this.setState({locationsModal:{...this.state.locationsModal,stateSelected:location.state}})}} >{location.state}</div>;
+                return <div key={index} className="modalitem" onClick={()=>{this.setState({locationsModal:{...this.state.locationsModal,stateSelected:location.state}})}} >{location.state}</div>;
             })}
             <Button text="BACK" onClick={()=>{this.setState({locationsModal:{active:true,countrySelected:"",citySelected:"",stateSelected:"",addressSelected:""}})}} />
             </div>);
@@ -141,7 +136,7 @@ class OfficeLocations extends React.Component<OfficeLocationsProps, OfficeLocati
         let unique = this.removeDuplicates(filtered,"city");
         return (<div>
             {unique.map((location,index)=>{
-                return <div onClick={()=>{this.setState({locationsModal:{...this.state.locationsModal,citySelected:location.city}})}} >{location.city}</div>;
+                return <div key={index} className="modalitem" onClick={()=>{this.setState({locationsModal:{...this.state.locationsModal,citySelected:location.city}})}} >{location.city}</div>;
             })}
             <Button text="BACK" onClick={()=>{this.setState({locationsModal:{active:true,countrySelected:this.state.locationsModal.countrySelected,citySelected:"",stateSelected:"",addressSelected:""}})}} />
 
@@ -155,7 +150,7 @@ class OfficeLocations extends React.Component<OfficeLocationsProps, OfficeLocati
         });        
         return (<div>
             {filtered.map((location,index)=>{
-                return <div onClick={()=>{this.updateOfficeAddress(location)}} >{location.address}</div>;
+                return <div key={index} className="modalitem" onClick={()=>{this.updateOfficeAddress(location)}} >{location.address}</div>;
             })}
             <Button text="BACK" onClick={()=>{this.setState({locationsModal:{active:true,countrySelected:this.state.locationsModal.countrySelected,citySelected:"",stateSelected:this.state.locationsModal.stateSelected,addressSelected:""}})}} />
 

@@ -337,6 +337,31 @@
           {
             background-color: #b1b1b1;
           }
+            button[type=button]
+            {
+            background-color: #14635f;
+            color: #fff;      
+            border:1px solid #cccc;        
+            height: 37px;
+            width: 125px;
+            text-align: center;
+            margin-top: 10px;
+            }
+            .closebutton
+            {
+              position: absolute;
+              top: 25px;
+              right: 25px;
+              border: 1px solid #fff;
+              width: 20px !important;
+              height: 20px !important;
+              padding: 0px !important;
+              margin: 0px !important;
+              min-width: 10px;
+              border-radius: 20px;
+              cursor: pointer;
+            }
+          
         }
     }
     .ms-Button-label

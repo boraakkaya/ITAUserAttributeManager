@@ -91,13 +91,14 @@ console.log("PickerDefault is : ",this.pickerDefault);
           </div>
           <div className="modalbody">
             {this.props.loggedInUser.directReports.map((item,index)=>{
-                return <div className="modalitem" onClick={()=>{
+                return <div key={index} className="modalitem" onClick={()=>{
                     store.dispatch(getSelectedUser(item.email)).then(()=>{
                         this.props.initialize(this.props.selectedUser);
                         this.setState({showModalDirectReports:false});
                     });
                 }}>{item.displayName}</div>
             })}
+            <Button className="closebutton" text="X" onClick={(e)=>{this._closeModalDirectReports()}} />
           </div>
         </Modal>
 
@@ -195,7 +196,7 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     <h1>Country Specialities</h1>
                     <div>
                         {this.props.selectedUser.countrySpecialities.map((country,index)=>{
-                            return <span>{country}, </span>
+                            return <span key={index}>{country}, </span>
                         })}
                     </div>
                 </div>
@@ -203,7 +204,7 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     <h1>Industry Specialities</h1>
                     <div>
                     {this.props.selectedUser.industrySpecialities.map((industry,index)=>{
-                            return <span>{industry}, </span>
+                            return <span key={index}>{industry}, </span>
                         })}
                     </div>
                 </div>
@@ -211,7 +212,7 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     <h1>Education Information</h1>
                     <div>
                     {this.props.selectedUser.education && this.props.selectedUser.education.map((education,index)=>{
-                            return <div>{education.schoolName}, {education.degree}, {education.year} </div>
+                            return <div key={index}>{education.schoolName}, {education.degree}, {education.year} </div>
                         })}
                     </div>
                 </div>
@@ -219,7 +220,7 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     <h1>Certification Information</h1>
                     <div>
                     {this.props.selectedUser.certifications && this.props.selectedUser.certifications.map((certification,index)=>{
-                            return <div>{certification.title}, {certification.organization}, {certification.year} </div>
+                            return <div key={index}>{certification.title}, {certification.organization}, {certification.year} </div>
                         })}
                     
                     </div>
@@ -228,7 +229,7 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     <h1>Emergency Contact Information</h1>
                     <div>
                     {this.props.selectedUser.emergencyContactInformation && this.props.selectedUser.emergencyContactInformation.map((contact,index)=>{
-                            return <div>{contact.firstName} {contact.lastName}, {contact.phoneNumber}, {contact.emailAddress} </div>
+                            return <div key={index}>{contact.firstName} {contact.lastName}, {contact.phoneNumber}, {contact.emailAddress} </div>
                         })}
                     </div>
                 </div>

@@ -40,13 +40,12 @@ export default class ItaUserAttributeManagerWebPart extends BaseClientSideWebPar
     (window as any).spfxContext = this.context;  //redux dev tools is crashing when adding context to state - too big JSON to handle
     (window as any).loggedInUser = this.context.pageContext.user;
     store.dispatch(isfetching(true));
+    store.dispatch({type:ITabs.userTab,data:""});
     await store.dispatch(getLoggedInUser()).then(()=>{
       console.log("Got Logged In User ..... ");
-      store.dispatch(getTermStore()).then(()=>{
-        store.dispatch({type:ITabs.userTab,data:""});
+      store.dispatch(getTermStore()).then(()=>{        
         store.dispatch(isfetching(false));
-      })
-      
+      })      
     }) 
     return super.onInit();
   }  
