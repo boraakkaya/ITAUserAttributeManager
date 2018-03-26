@@ -27,7 +27,7 @@ interface UserFormProps {
     loggedInUser:IUserProfile;
     isfetching:boolean;
     initialize:(IUserProfile)=>{};    
-    departmentTerms:ITerms
+    itaTermStore:ITerms
     
 };
 interface UserFormState {
@@ -177,7 +177,7 @@ const mapStateToProps = (state, ownProps) => {
         currentTab:state.currentTab,
         loggedInUser:state.loggedInUser,
         isfetching:state.isfetching,
-        departmentTerms : state.itaTermStore.ITATermGroupList[1].TermSets["0"].Terms[1]
+        itaTermStore : state.itaTermStore
     }
 }
 export default reduxForm({

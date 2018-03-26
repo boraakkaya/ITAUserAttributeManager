@@ -43,7 +43,8 @@ export default class ItaUserAttributeManagerWebPart extends BaseClientSideWebPar
     store.dispatch({type:ITabs.userTab,data:""});
     await store.dispatch(getLoggedInUser()).then(()=>{
       console.log("Got Logged In User ..... ");
-      store.dispatch(getTermStore()).then(()=>{        
+      store.dispatch(getTermStore()).then(()=>{
+        console.log("Got Term Store");        
         store.dispatch(isfetching(false));
       })      
     }) 
