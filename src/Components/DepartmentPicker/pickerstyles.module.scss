@@ -1,0 +1,172 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+.wrapper
+{
+    .label
+    {
+        display: inline-block;
+        margin-right: 10px;
+        margin-left: 12px;
+        vertical-align: top
+    }
+    .selections
+    {
+        display: flex;
+        
+        border-bottom:1px solid #a6a6a6;
+        padding-left: 12px;
+        .inputbox
+        {
+            display: inline-block;
+            border: none;            
+        }
+    }    
+}
+.taxonomytextbox
+{
+    display: inline;
+    position: relative;
+    input[type="text"]
+    {
+        width:80%;
+        margin: 3px 4px 10px 0px;
+        line-height: 24px;
+    }
+    img{
+        display: inline-block;
+        vertical-align: text-bottom;
+    }
+    .selectedterm{
+        display: inline-block;
+    margin: 3px;
+    padding: 4px;
+    background-color: #14635f;
+    color: #fff;
+    border-radius: 20px;
+    .removeterm
+    {
+        border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 11px;
+    line-height: 11px;
+    margin: 0px 5px 0px 10px;    
+    display: inline-block;
+    padding: 2px 4px;
+    cursor: pointer;
+    background-color: darkcyan;        
+    }
+}
+.suggestions
+{
+    position: absolute;
+    background-color: #fff;
+    width: 100%;
+    z-index: 9999;
+    padding: 0px 5px;
+    border: 1px solid #a6a6a6;    
+    height: auto;
+    max-height: 250px;
+    overflow-y: auto;
+    left: 0px;
+    display: block;
+    margin-top: -8px;
+    padding-bottom: 8px;
+    top:35px;
+    .suggestion
+    {
+        border-bottom: 1px solid #a6a6a6;
+        cursor:pointer;
+        .suggestionheading
+        {
+            display: block;
+
+        }
+        .suggestionlocation
+        {
+            font-size:11px;
+            padding-bottom: 3px;
+        }
+    }
+    .suggestion:hover
+    {
+        background-color: #a6a6a6;
+    }
+
+}
+}
+:global
+{
+  .pickermodalcontainer
+    {
+      width:500px;
+      height: 650px;      
+      margin: 250px auto;
+      padding: 15px;
+      .pickermodalheader
+      {
+        font-size: 25px;
+        background-color: #14635f;
+        padding: 5px 10px;
+        color:#fff;        
+      }    
+    .pickermodalbody
+    {
+      .termtree
+      {        
+        border:0px solid #a6a6a6;
+        padding: 5px;
+        height: 350px;
+        overflow-y: auto;
+      }
+      .termitem
+      {
+          margin-left: 16px;
+          div
+          {
+              span{
+                  padding-left: 8px;
+                  cursor: pointer;
+              }
+          span:focus
+          {
+              background-color: #14635f;
+              color:#fff;              
+          }
+        }
+      }
+      .controlbar
+      {
+          input[type='text']
+          {
+              width: 80%;              
+          }
+          button[type=button]
+            {
+            background-color: #14635f;
+            color: #fff;      
+            border:1px solid #cccc;        
+            height: 30px;
+            width: 105px;
+            text-align: center;
+            margin-top: 10px;
+            display: block;
+            margin-bottom: 10px;
+            }
+      }
+    }
+    .closebutton
+            {
+              position: absolute;
+              top: 25px;
+              right: 25px;
+              border: 1px solid #fff;
+              width: 20px !important;
+              height: 20px !important;
+              padding: 0px !important;
+              margin: 0px !important;
+              min-width: 10px;
+              border-radius: 20px;
+              cursor: pointer;
+            }
+    }
+    
+}

@@ -19,12 +19,15 @@ import { IWebPartContext } from '@microsoft/sp-webpart-base';
 import {HttpClient,HttpClientConfiguration} from '@microsoft/sp-http';
 import { isfetching, updateUserProfileAsync } from '../Actions';
 import Modal from 'office-ui-fabric-react/lib/Modal';
+import {DepartmentPicker, Term} from './DepartmentPicker';
+import { ITerms } from '../Interfaces/ITermStore';
 
 interface UserFormProps {
     currentTab:string;
     loggedInUser:IUserProfile;
     isfetching:boolean;
     initialize:(IUserProfile)=>{};    
+    departmentTerms:ITerms
     
 };
 interface UserFormState {
@@ -82,14 +85,13 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                 <div>
                 <div>Job Title: {this.props.loggedInUser.jobTitle} </div>
                 </div>
-                <form>
+                <form>                    
                 <div className={styles.formsection}>
                     <h1>Phone Numbers</h1>
                     <div>
                     <Field name="cellPhone" component={UITextField} type="text"  label="Cell Phone" props={{errorMessage:"Required",required:true}}  />
                     </div>
-                </div>                                
-
+                </div>
                 <div className={styles.formsection}>
                     <h1>Mailing Address</h1>
                     <div>
@@ -174,7 +176,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         currentTab:state.currentTab,
         loggedInUser:state.loggedInUser,
-        isfetching:state.isfetching
+        isfetching:state.isfetching,
+        departmentTerms : state.itaTermStore.ITATermGroupList[1].TermSets["0"].Terms[1]
     }
 }
 export default reduxForm({

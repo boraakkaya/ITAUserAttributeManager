@@ -13,7 +13,8 @@ import Modal from 'office-ui-fabric-react/lib/Modal';
 import store from '../Store';
 import CustomDatePicker from './FabricUI/CustomDatePicker';
 import OfficeLocations from './OfficeLocations';
-
+import { DepartmentPicker } from './DepartmentPicker';
+import { ITerms } from '../Interfaces/ITermStore';
 interface ManagerFormProps {
     currentTab:string;
     loggedInUser:IUserProfile;
@@ -22,6 +23,7 @@ interface ManagerFormProps {
     selectedUser:IUserProfile;
     selectedUserForm:IUserProfile;
     initialize:(IUserProfile)=>{};
+    departmentTerms:ITerms;
     
 };
 
@@ -138,20 +140,23 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     <Field name="workPhone" component={UITextField} type="text"  label="Work Phone" props={{errorMessage:"Required",required:true}}  />
 
                     <div style={{paddingLeft:"12px", margin:"10px 0px"}}>                    
-                    <Field name="employeeType" component={Dropdown} label="Employee Type" props={{options:[{key:"Regular Employee",text:"Regular Employee"},{key:"Contractor",text:"Contractor"},{key:"Intern",text:"Intern"}],defaultSelectedKey:this.props.selectedUser.employeeType == undefined ? undefined : this.props.selectedUser.employeeType,onChanged:(e)=>{console.log("EEEEEEEEEEE ",e);this.props.change("employeeType",e.text);}}} />                    
+                    <Field name="employeeType" component={Dropdown} label="Employee Type" props={{options:[{key:"Regular Employee",text:"Regular Employee"},{key:"Contractor",text:"Contractor"},{key:"Intern",text:"Intern"}],defaultSelectedKey:this.props.selectedUser.employeeType == undefined ? undefined : this.props.selectedUser.employeeType,onChanged:(e)=>{this.props.change("employeeType",e.text);}}} />
                     </div>
-
                     <Field name="jobTitle" component={UITextField} type="text"  label="Job Title" props={{errorMessage:"Required",required:true}}  />
 
                     <Field name="department" component={UITextField} type="text"  label="Department" props={{errorMessage:"Required",required:true}}  />
+
+                    <DepartmentPicker label="Department" termSource={this.props.departmentTerms}  />
+
+
+                    
 
                     <div style={{paddingLeft:"12px", margin:"0px 0px 10px 0px"}}>   
                     Manager                 
                     <br/>
                     <Field name="manager" component={ITAPeoplePicker} label="Manager" props={{defaultItems: this.props.selectedUser.manager.displayName !="" ? [{primaryText:this.props.selectedUser.manager.displayName,secondaryText:this.props.selectedUser.manager.email}] : [] ,
                     spContext: (window as any).spfxContext,
-                    itemLimit:1,onChange:(e)=>{
-                        console.log("EEEEEEEEEEEEEEEEEEEEEEEE",e)
+                    itemLimit:1,onChange:(e)=>{                        
                     if(e.length > 0)
                     {
                         this.props.change("manager",{displayName:e[0].primaryText,email:e[0].secondaryText});
@@ -162,16 +167,7 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     }
                     }}} />                    
                     </div>
-
                     <div style={{paddingLeft:"12px", margin:"0px 0px 10px 0px"}}>
-                    {/* <Field name="accountExpiration" component={DatePicker} label="Account Expiration" props={{
-                        //value:accountExpirationDate,
-                        //value:new Date("10/10/2018"),
-                        onSelectDate:(e)=>{
-                            console.log(this.props);
-                            this.props.change("accountExpiration",e);console.log("Changed",e);}
-                    }} />  */}
-
                     <Field name="accountExpiration" component={CustomDatePicker} label="Account Expiration" props={{
                         onSelectDate:(e)=>{
                             console.log(this.props);
@@ -183,8 +179,6 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     <Field name="officeLocation" component={OfficeLocations} label="Office Location" props={{handleChange:(val)=>{
                         this.props.change("officeLocation",val);
                     }}} />
-
-
 
                     <Field name="officeNumber" component={UITextField} type="text"  label="Office Number" props={{errorMessage:"Required",required:true}}  />
                     
@@ -299,7 +293,8 @@ const mapStateToProps = (state, ownProps) => {
         currentTab:state.currentTab,
         loggedInUser:state.loggedInUser,
         isfetching:state.isfetching,
-        selectedUser:state.selectedUser
+        selectedUser:state.selectedUser,
+        departmentTerms : state.itaTermStore.ITATermGroupList[1].TermSets["0"].Terms[1]
     }
 }
 export default reduxForm({
