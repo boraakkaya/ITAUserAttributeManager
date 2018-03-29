@@ -44,7 +44,7 @@ class UserDetail extends React.Component<UserDetailProps, UserDetailState> {
             <br/>
             {this.props.user.workPhone}
             <br/>
-            {this.props.user.officeState},{this.props.user.officeCountry}
+            {this.props.user.taxonomyDepartment}            
             </div>
             </div>);
     }

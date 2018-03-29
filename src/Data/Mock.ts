@@ -10,11 +10,8 @@ export const mockUsers: IUserProfile[] = [
         cellPhone: "571-888-9900",
         jobTitle:"Project Manager",
         department:"OCIO-PD",
+        taxonomyDepartment:"Product Delivery",
         emailAddress: "johndoe@boraakkaya.onmicrosoft.com",
-        officeRegion: "North America - East",
-        officeCountry: "U.S.A",
-        officeState: "Washington D.C",
-        officeLocation:1,
         mailingAddress: { addressLine1: "Parkway Lane ", addressLine2: "Unit 1254", state: "VA",city:"Arlington", zipCode: "22200", country: "U.S.A" },
         officeNumber: "19119",
         manager: { displayName: "Bora Akkaya", email: "boraakkaya@boraakkaya.onmicrosoft.com" },
@@ -37,12 +34,9 @@ export const mockUsers: IUserProfile[] = [
         workPhone: "214-565-8475", //mngr
         cellPhone: "897-412-2356", //user
         jobTitle:"Designer",
-        department:"OCIO-OD",
-        emailAddress: "janettelowes@boraakkaya.onmicrosoft.com", 
-        officeRegion: "North America - West", //mngr
-        officeCountry: "U.S.A", //mngr
-        officeState: "California", //mngr
-        officeLocation:7,
+        department:"FinAdm",
+        taxonomyDepartment:"Finance and Administration",
+        emailAddress: "janettelowes@boraakkaya.onmicrosoft.com",
         mailingAddress: { addressLine1: "One Technology Dr.", addressLine2: "Apt #1424", state: "CA", city:"Oakland", zipCode: "84211", country: "U.S.A" },//user
         officeNumber: "3545", //mngr
         manager: { displayName: "Bora Akkaya", email: "boraakkaya@boraakkaya.onmicrosoft.com" }, //mngr
@@ -65,12 +59,9 @@ export const mockUsers: IUserProfile[] = [
         workPhone: "111-222-333",
         cellPhone: "444-555-6666",
         jobTitle:"SharePoint Developer",
-        department:"OCIO-SPD",
+        department:"OCIO-CD",
+        taxonomyDepartment:"Customer Service",
         emailAddress: "boraakkaya@boraakkaya.onmicrosoft.com",
-        officeRegion: "North America - East",
-        officeCountry: "U.S.A",
-        officeState: "Washington D.C",
-        officeLocation:22,
         mailingAddress: { addressLine1: "950 N. Randolph St.", addressLine2: "Apt #1424 Arlington", state: "VA", city:"Arlington", zipCode: "22203", country: "U.S.A" },
         officeNumber: "11111",
         manager: { displayName: "Michael Brockman", email: "michael.brockman@trade.gov" },

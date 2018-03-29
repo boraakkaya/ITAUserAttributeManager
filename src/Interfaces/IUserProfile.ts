@@ -7,12 +7,9 @@ export interface IUserProfile
     workPhone:string;
     jobTitle:string;
     department:string;
+    taxonomyDepartment:string;
     cellPhone:string;
-    emailAddress:string;
-    officeRegion:string;
-    officeCountry:string;
-    officeState:string;
-    officeLocation?:number;
+    emailAddress:string;    
     mailingAddress:IMailingAddress;
     officeNumber:string;
     manager:IUser;
@@ -26,7 +23,6 @@ export interface IUserProfile
     education:Array<IEducation>;
     certifications:Array<ICertification>;
     directReports?:IUser[];
-
 }
 export interface IMailingAddress
 {

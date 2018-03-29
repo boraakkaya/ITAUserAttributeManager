@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Field, reduxForm, ConfigProps, DecoratedComponentClass, GenericField,FieldArray  } from 'redux-form'
 import UITextField from './../Components/FabricUI/UITextField';
 import styles from '../webparts/itaUserAttributeManager/ItaUserAttributeManagerWebPart.module.scss';
-import { Button, autobind, IPersonaProps, Dropdown, DatePicker } from 'office-ui-fabric-react';
+import { Button, autobind, IPersonaProps, Dropdown, DatePicker, Label } from 'office-ui-fabric-react';
 import { IUserProfile } from '../Interfaces/IUserProfile';
 import FetchBox from './FetchBox';
 import UserDetail from './UserDetail';
@@ -13,8 +13,12 @@ import Modal from 'office-ui-fabric-react/lib/Modal';
 import store from '../Store';
 import CustomDatePicker from './FabricUI/CustomDatePicker';
 import OfficeLocations from './OfficeLocations';
-import { DepartmentPicker } from './DepartmentPicker';
+import { TaxonomyPicker } from './TaxonomyPicker';
 import { ITerms } from '../Interfaces/ITermStore';
+import { IITALocation, ITALocations } from '../Data/ITALocations';
+import { EnvironmentType, Environment } from '@microsoft/sp-core-library';
+import { IWebPartContext } from '@microsoft/sp-webpart-base';
+import {SPHttpClient} from '@microsoft/sp-http';
 interface ManagerFormProps {
     currentTab:string;
     loggedInUser:IUserProfile;
@@ -30,28 +34,28 @@ interface ManagerFormProps {
 interface ManagerFormState {
     showModalDirectReports:boolean;
     ModalResponseStatus:{active:boolean, message:string};
+    userDepartment:Array<ITerms>;
+    departmentLocation:string;
 };
 
 class ManagerForm extends React.Component<ManagerFormProps, ManagerFormState> {
 
-    pickerDefault:ITAPersonaProps[] = []
+    pickerDefault:ITAPersonaProps[] = []    
     constructor(props)
     {        
         super(props);
-        console.log("Constructor");
-        this.state={showModalDirectReports:false, ModalResponseStatus:{active:false,message:""}};
+        console.log("ManagerForm Constructor");
+        this.state={showModalDirectReports:false, ModalResponseStatus:{active:false,message:""},userDepartment:[], departmentLocation:""};
     }
     componentWillMount()
     {
-        console.log("Component Will Mount");
-    }
-    
+        console.log("ManagerForm Component Will Mount");
+    }    
     componentWillUpdate(props,state,ctx)
     {
-        console.log("Component Will Update");
+        console.log("ManagerForm Component Will Update");
         if(props.selectedUser.emailAddress != undefined)
         {
-        //    this.pickerDefault = [];
         this.pickerDefault=[{primaryText:props.selectedUser.firstName + " "  + props.selectedUser.lastName,
     secondaryText: props.selectedUser.emailAddress,
 imageUrl: `https://boraakkaya.sharepoint.com/_layouts/15/userphoto.aspx?size=M&username=${props.selectedUser.emailAddress}`,userID:1}];
@@ -62,9 +66,26 @@ console.log("PickerDefault is : ",this.pickerDefault);
             this.pickerDefault = [];
         }
     }
+
+    @autobind
+    public getChildTerms(val:string,term:ITerms, result:Array<ITerms>)
+    {
+        console.log("Value passd : ",val, " -  ResultSet : ", result);
+        if(term.Name.toLowerCase()==val.toLowerCase())
+        {            
+            result.push(term);
+        }
+        if(term.Terms != undefined && term.Terms.length > 0)
+        {
+            (term.Terms as Array<ITerms>).map((a,index)=>{
+                this.getChildTerms(val,a,result);
+            })
+        }
+        return result;
+    }
     public render(): JSX.Element {
         
-        console.log("Re-rendering!!", this.props);
+        console.log("ManagerForm Rendering!!", this.props);
         var storeState:any = store.getState();
         let accountExpirationDate = storeState.form.selectedUserForm ? storeState.form.selectedUserForm.values.accountExpiration : undefined;
         
@@ -94,16 +115,25 @@ console.log("PickerDefault is : ",this.pickerDefault);
           <div className="modalbody">
             {this.props.loggedInUser.directReports.map((item,index)=>{
                 return <div key={index} className="modalitem" onClick={()=>{
-                    store.dispatch(getSelectedUser(item.email)).then(()=>{
+                    store.dispatch(getSelectedUser(item.email)).then(async()=>{
                         this.props.initialize(this.props.selectedUser);
                         this.setState({showModalDirectReports:false});
+                        var userDepartment = [];
+                        this.props.departmentTerms.Terms.map((term,index)=>{
+                            console.log("YYYYYYYYY", userDepartment);
+                            userDepartment = userDepartment.concat(this.getChildTerms(this.props.selectedUser.taxonomyDepartment,term,[]));
+                        });                        
+                        this.setState({userDepartment:userDepartment});
+                        await this.getOfficeLocation(userDepartment[0].Id).then((location)=>{
+                            let strLocation = `${location.AddressLine1} ${location.AddressLine2} ${location.City} ${location.State} ${location.Country} ${location.ZIPCode}`;
+                            this.setState({departmentLocation : strLocation});
+                        });
                     });
                 }}>{item.displayName}</div>
             })}
             <Button className="closebutton" text="X" onClick={(e)=>{this._closeModalDirectReports()}} />
           </div>
         </Modal>
-
         <Modal
           isOpen={ this.state.ModalResponseStatus.active }
           onDismiss={ this._closeModalResponseStatus }
@@ -144,12 +174,31 @@ console.log("PickerDefault is : ",this.pickerDefault);
                     </div>
                     <Field name="jobTitle" component={UITextField} type="text"  label="Job Title" props={{errorMessage:"Required",required:true}}  />
 
-                    <Field name="department" component={UITextField} type="text"  label="Department" props={{errorMessage:"Required",required:true}}  />
+                    {/* <Field name="department" component={UITextField} type="text"  label="Department" props={{errorMessage:"Required",required:true}}  />
+                    <DepartmentPicker label="Department" termSource={this.props.departmentTerms}  allowMultipleSelection={false} /> */}
 
-                    <DepartmentPicker label="Department" termSource={this.props.departmentTerms}  />
-
-
+                    <Field name="department" component={TaxonomyPicker} label="Department" props={{errorMessage:"Required",required:true, defaultSelectedTerms : this.state.userDepartment,termSource:this.props.departmentTerms,allowMultipleSelection:false, onSelect:(terms:Array<ITerms>)=>{
+                        if(terms != undefined && terms.length > 0)
+                        {
+                        this.props.change("department",terms[0].Labels.length > 1 ? terms[0].Labels[1] : terms[0].Name);
+                        this.props.change("taxonomyDepartment",terms[0].Name);                        
+                        this.getOfficeLocation(terms[0].Id).then((location)=>{
+                            let strLocation = `${location.AddressLine1} ${location.AddressLine2} ${location.City} ${location.State} ${location.Country} ${location.ZIPCode}`;
+                            this.setState({departmentLocation : strLocation});
+                        });
+                        this.setState({userDepartment:terms});
+                        }
+                        else
+                        {
+                            this.props.change("department","");
+                            this.props.change("taxonomyDepartment","");
+                            this.setState({userDepartment:[]});
+                        }                        
+                    }}}  />
+                    <div className={styles.readonlyelement}>Department Location :{this.state.departmentLocation}</div>
                     
+                    <Field name="taxonomyDepartment" component="input" type="text" style={{display:"none"}} />
+                    <Field name="officeNumber" component={UITextField} type="text"  label="Office Number" props={{errorMessage:"Required",required:true}}  />
 
                     <div style={{paddingLeft:"12px", margin:"0px 0px 10px 0px"}}>   
                     Manager                 
@@ -174,14 +223,6 @@ console.log("PickerDefault is : ",this.pickerDefault);
                             this.props.change("accountExpiration",e.toLocaleDateString());console.log("Changed",e.toLocaleDateString())}
                     }} />                  
                     </div>
-                    <Field name="officeRegion" component={UITextField} type="text"  label="Office Region" props={{errorMessage:"Required",required:true}}  />
-
-                    <Field name="officeLocation" component={OfficeLocations} label="Office Location" props={{handleChange:(val)=>{
-                        this.props.change("officeLocation",val);
-                    }}} />
-
-                    <Field name="officeNumber" component={UITextField} type="text"  label="Office Number" props={{errorMessage:"Required",required:true}}  />
-                    
                     </div>
 
                 </div>
@@ -257,6 +298,55 @@ console.log("PickerDefault is : ",this.pickerDefault);
     }
 
     @autobind
+    async getOfficeLocation(termID):Promise<IITALocation>
+    {
+        var location:IITALocation| any;
+        var locationsArray:Array<IITALocation>;
+        if(Environment.type == EnvironmentType.Local)
+        {
+            await new Promise((resolve)=>{
+                window.setTimeout(()=>{
+                    resolve();
+                },2000);
+            }).then((async)=>{                
+                locationsArray = ITALocations;
+                locationsArray = locationsArray.filter((location:IITALocation,index)=>{
+                return location.Department.TermGuid == termID ? true : false;
+            });
+                location = locationsArray[0];
+            })
+        }
+        else
+        {
+            var ctx:IWebPartContext = (window as any).spfxContext;
+            await ctx.spHttpClient.get(`https://itadev.sharepoint.com/_api/web/lists/getbytitle('ITA%20Locations')/items`,SPHttpClient.configurations.v1,{}).then(async (response)=>{
+                await response.json().then(async (data)=>{
+                if(data.value && data.value.length > 0)
+                {
+                    locationsArray = data.value;
+                    locationsArray = locationsArray.filter((a:IITALocation,index)=>{
+                    return a.Department.TermGuid == termID ? true : false;
+                    });
+                    location = {};
+                    location.AddressLine1 = locationsArray[0].AddressLine1 == null ? "" : locationsArray[0].AddressLine1;
+                    location.AddressLine2 = locationsArray[0].AddressLine2 == null ? "" : locationsArray[0].AddressLine2;
+                    location.City = locationsArray[0].City == null ? "" : locationsArray[0].City;
+                    location.State = locationsArray[0].State == null ? "" : locationsArray[0].State;
+                    location.Country = locationsArray[0].Country == null ? "" : locationsArray[0].Country;
+                    location.ZIPCode = locationsArray[0].ZIPCode == null ? "" : locationsArray[0].ZIPCode;
+                    location.Department = locationsArray[0].Department;
+                }
+                else
+                {
+                location = {AddressLine1:"", AddressLine2:"", Country:"", State:"", City:"",ZIPCode:"", Department:{Label:"",TermGuid:""}}   }
+                })}).catch(()=>{
+                location = {AddressLine1:"", AddressLine2:"", Country:"", State:"", City:"",ZIPCode:"", Department:{Label:"",TermGuid:""}}
+            })
+        }
+        return location;
+    }
+
+    @autobind
     _closeModalDirectReports()
     {
         this.setState({showModalDirectReports:false});
@@ -275,8 +365,20 @@ console.log("PickerDefault is : ",this.pickerDefault);
         {
         let pickerSelection = user[0];
         let pickerEmail = pickerSelection.secondaryText;
-        store.dispatch(getSelectedUser(pickerEmail)).then(()=>{
+        store.dispatch(getSelectedUser(pickerEmail)).then(async()=>{
             this.props.initialize(this.props.selectedUser);
+            //
+            var userDepartment:Array<ITerms> = [];
+            this.props.departmentTerms.Terms.map((term,index)=>{
+            console.log("ZZZZZZZZZ", userDepartment);
+            userDepartment = userDepartment.concat(this.getChildTerms(this.props.selectedUser.taxonomyDepartment,term,[]));
+            });                        
+            this.setState({userDepartment:userDepartment});
+            await this.getOfficeLocation(userDepartment[0].Id).then((location)=>{
+                let strLocation = `${location.AddressLine1} ${location.AddressLine2} ${location.City} ${location.State} ${location.Country} ${location.ZIPCode}`;
+                this.setState({departmentLocation : strLocation});
+            });
+            //
         });
         
         }

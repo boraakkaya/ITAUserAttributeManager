@@ -19,7 +19,6 @@ import { IWebPartContext } from '@microsoft/sp-webpart-base';
 import {HttpClient,HttpClientConfiguration} from '@microsoft/sp-http';
 import { isfetching, updateUserProfileAsync } from '../Actions';
 import Modal from 'office-ui-fabric-react/lib/Modal';
-import {DepartmentPicker, Term} from './DepartmentPicker';
 import { ITerms } from '../Interfaces/ITermStore';
 
 interface UserFormProps {
@@ -77,11 +76,11 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                 <div>Employee ID: {this.props.loggedInUser.employeeID} </div>
                 </div>
                 <div>
-                <div>Manager: {this.props.loggedInUser.manager.displayName} </div>
+                <div>Employee Type: {this.props.loggedInUser.employeeType} </div>
                 </div>
                 <div>
-                <div>Department: {this.props.loggedInUser.department} </div>
-                </div>
+                <div>Manager: {this.props.loggedInUser.manager.displayName} </div>
+                </div>                
                 <div>
                 <div>Job Title: {this.props.loggedInUser.jobTitle} </div>
                 </div>

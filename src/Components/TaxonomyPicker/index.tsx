@@ -3,28 +3,31 @@ import styles from './pickerstyles.module.scss';
 import { ITerms, ISuggestedTerms } from '../../Interfaces/ITermStore';
 import Modal from 'office-ui-fabric-react/lib/Modal';
 import { autobind, Button } from 'office-ui-fabric-react';
-export interface DepartmentPickerProps {
+export interface TaxonomyPickerProps {
     label:string;
     termSource:ITerms;
-    defaultSelectedTerms?:Array<ITerms>;    
+    defaultSelectedTerms?:Array<ITerms>;
+    allowMultipleSelection?:boolean;
+    onSelect:(e:Array<ITerms>) => any;    
 };
-export interface DepartmentPickerState {
+export interface TaxonomyPickerState {
     modalActive:boolean;
     selectedTerms:Array<ITerms>;
     currentSelection?:ITerms | undefined;
 };
-export class DepartmentPicker extends React.Component<DepartmentPickerProps, DepartmentPickerState> {
-    static defaultProps = {defaultSelectedTerms:[]}
+export class TaxonomyPicker extends React.Component<TaxonomyPickerProps, TaxonomyPickerState> {
+    static defaultProps = {defaultSelectedTerms:[], allowMultipleSelection:true}
     public constructor(props)
     {
-        super(props);
-        console.log("xyzConstructor", this.props);
+        super(props);        
         this.state = {modalActive:false, selectedTerms:this.props.defaultSelectedTerms, currentSelection:undefined}
+        console.log("ON Taxonomy Picker Constructor ", this.props, this.state);
     }
-    componentDidMount()
+    componentWillReceiveProps(nextProps,nextContext)
     {
-        console.log("xyzMounted.....");
-    }
+        console.log("Taxonomy Picker Will Receive Props", nextProps);
+        this.setState({selectedTerms:nextProps.defaultSelectedTerms});
+    }    
     handleOnTermSelect(term:ITerms)
     {
         this.setState({currentSelection:term});
@@ -35,9 +38,14 @@ export class DepartmentPicker extends React.Component<DepartmentPickerProps, Dep
         if(this.state.currentSelection != undefined)
         {
         var nextState = this.state.selectedTerms;
+        if(!this.props.allowMultipleSelection)
+        {
+            nextState = [];
+        }
         nextState.push(this.state.currentSelection);
         this.setState({selectedTerms:nextState});
         this.setState({currentSelection:undefined});
+        this.props.onSelect(nextState);
         }
     }
     public render(): JSX.Element {
@@ -67,7 +75,15 @@ export class DepartmentPicker extends React.Component<DepartmentPickerProps, Dep
                 {/* Start Select Button and TextBox */}
                 <div className="controlbar">
                     <Button text="Select >>" onClick={this.pushSelectedTerm} />
-                    <TaxonomyTextBox selectedTerms={this.state.selectedTerms} onUpdateSelectedItems={(updatedArray)=>{this.setState({selectedTerms:updatedArray})}} termSource={this.props.termSource} />
+                    <TaxonomyTextBox displayTermPicker={this.displayTermPicker} selectedTerms={this.state.selectedTerms} onUpdateSelectedItems={(updatedArray)=>{
+                        if(!this.props.allowMultipleSelection && updatedArray.length > 0)
+                        {
+                            updatedArray = [updatedArray[updatedArray.length-1]];
+                        }
+                        this.setState({selectedTerms:updatedArray});
+                        this.props.onSelect(updatedArray);
+                        }} termSource={this.props.termSource} />
+                    <Button text="OK" onClick={(e)=>{this._closeModal()}} />
                 </div>
 
                  <Button className="closebutton" text="X" onClick={(e)=>{this._closeModal()}} />
@@ -81,11 +97,14 @@ export class DepartmentPicker extends React.Component<DepartmentPickerProps, Dep
                     <div className={styles.inputbox}>
                         <TaxonomyTextBox selectedTerms={this.state.selectedTerms}
                         onUpdateSelectedItems={(updatedArray)=>{
-                            console.log("Getting New State : ", updatedArray);
+                            if(!this.props.allowMultipleSelection && updatedArray.length > 0)
+                            {
+                                updatedArray = [updatedArray[updatedArray.length-1]];
+                            }
                             this.setState({selectedTerms:updatedArray});
-
-                            }} termSource={this.props.termSource} />
-                        <img aria-hidden="true" src="https://spoprod-a.akamaihd.net/files/odsp-next-prod_2018-03-09-sts_20180314.001/odsp-media/images/taxonomy/taxonomycopyterm.png" alt="Select : Managed" onClick={this.displayTermPicker} />
+                            this.props.onSelect(updatedArray);
+                            }} termSource={this.props.termSource} displayTermPicker={this.displayTermPicker} />
+                        
                     </div>
                 </div>                
             </div>
@@ -102,7 +121,6 @@ export class DepartmentPicker extends React.Component<DepartmentPickerProps, Dep
     }
 
 }
-//export default DepartmentPicker;
 
 export interface TermProps {
     term:ITerms;
@@ -148,6 +166,7 @@ export interface TaxonomyTextBoxProps {
     selectedTerms?:Array<ITerms>;
     onUpdateSelectedItems:(e:Array<ITerms>)=>any;
     termSource:ITerms;
+    displayTermPicker:()=>any;
 };
 export interface TaxonomyTextBoxState {
     suggestedTerms?:Array<ISuggestedTerms> | undefined;
@@ -159,28 +178,20 @@ export class TaxonomyTextBox extends React.Component<TaxonomyTextBoxProps, Taxon
         super(props);
         this.state= {suggestedTerms:undefined};        
     }
-    public render(): JSX.Element {
-        console.log("xyzRender ",this.state)
+    public render(): JSX.Element {        
         return (<div className={styles.taxonomytextbox}>
-
-        <input type="text" onChange={(e)=>{this.handleTermSearch(e.currentTarget.value)}}
-             /* onBlur={()=>{this.setState({suggestedTerms:undefined})}} */
-             ref={(a)=>{this.txtBox = a}}
-              />
-
-
+        <input type="text" onChange={(e)=>{this.handleTermSearch(e.currentTarget.value)}} ref={(a)=>{this.txtBox = a}} />
+        <img aria-hidden="true" src="https://spoprod-a.akamaihd.net/files/odsp-next-prod_2018-03-09-sts_20180314.001/odsp-media/images/taxonomy/taxonomycopyterm.png" alt="Select : Managed" onClick={this.props.displayTermPicker} />
             <span>
             {this.props.selectedTerms && this.props.selectedTerms.map((term:ITerms,index)=>{
-                return <span className={styles.selectedterm}>{term.Name} <span  className={styles.removeterm} onClick={()=>{this.removeTerm(term)}} >X</span></span> 
+                return <span key={index} className={styles.selectedterm}>{term.Name} <span  className={styles.removeterm} onClick={()=>{this.removeTerm(term)}} >X</span></span> 
             })}
             </span>
-            
-
 
             {this.state.suggestedTerms && <Suggestions suggestions = {this.state.suggestedTerms} onSelect={(term:ITerms)=>{
                 var updatedTerms = this.props.selectedTerms;
                 updatedTerms.push(term);
-                console.log("Updated Termssssssss ", updatedTerms);
+                console.log("Updated Termssssssss ", updatedTerms);                
                 this.props.onUpdateSelectedItems(updatedTerms);
                 this.txtBox.value ="";
                 this.setState({suggestedTerms:undefined});                
@@ -205,7 +216,7 @@ export class TaxonomyTextBox extends React.Component<TaxonomyTextBoxProps, Taxon
     }
 
     @autobind
-    getMatchingChildTerms(val:string,term:ISuggestedTerms, result:Array<ISuggestedTerms>,location)
+    public getMatchingChildTerms(val:string,term:ISuggestedTerms, result:Array<ISuggestedTerms>,location)
     {
         if(term.Name.toLowerCase().indexOf(val.toLowerCase()) > -1)
         {
@@ -223,11 +234,13 @@ export class TaxonomyTextBox extends React.Component<TaxonomyTextBoxProps, Taxon
     @autobind
     removeTerm(term)
     {
-        var reducedArray:Array<ITerms>;        
+        var reducedArray:Array<ITerms> = [];
+        console.log("ReducedArray ", reducedArray);        
         reducedArray = this.props.selectedTerms.filter((val,index)=>{
-           return val != term;
+           return val != term ? true : false;
        })
         //this.setState({selectedTerms : reducedArray});
+        console.log("ReducedArray2 ", reducedArray);
         this.props.onUpdateSelectedItems(reducedArray);
     }
 }

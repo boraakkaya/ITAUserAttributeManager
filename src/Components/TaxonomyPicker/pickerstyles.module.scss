@@ -10,21 +10,23 @@
     }
     .selections
     {
-        display: flex;
-        
+        display: flex;        
         border-bottom:1px solid #a6a6a6;
         padding-left: 12px;
+        margin-bottom: 10px;
         .inputbox
         {
             display: inline-block;
-            border: none;            
+            border: none;
+            width:100%;            
         }
     }    
 }
 .taxonomytextbox
 {
-    display: inline;
+    display: block;
     position: relative;
+    margin-bottom: 5px;
     input[type="text"]
     {
         width:80%;
@@ -37,29 +39,28 @@
     }
     .selectedterm{
         display: inline-block;
-    margin: 3px;
-    padding: 4px;
-    background-color: #14635f;
-    color: #fff;
-    border-radius: 20px;
+        margin: 3px;
+        padding: 4px 5px;
+        background-color: #EAEAEA;
+        color: #515151;
+        border-radius: 0px;
     .removeterm
-    {
-        border: 1px solid #ccc;
-    border-radius: 10px;
+    {    
+    /* border-radius: 10px; */
     font-size: 11px;
     line-height: 11px;
-    margin: 0px 5px 0px 10px;    
+    margin: 0px 0px 0px 20px;
     display: inline-block;
-    padding: 2px 4px;
+    padding: 2px 5px;
     cursor: pointer;
-    background-color: darkcyan;        
+    /* background-color: slategrey; */        
     }
 }
 .suggestions
 {
     position: absolute;
-    background-color: #fff;
-    width: 100%;
+    background-color:antiquewhite;
+    width: 80%;
     z-index: 9999;
     padding: 0px 5px;
     border: 1px solid #a6a6a6;    
@@ -68,7 +69,7 @@
     overflow-y: auto;
     left: 0px;
     display: block;
-    margin-top: -8px;
+    margin-top: -3px;
     padding-bottom: 8px;
     top:35px;
     .suggestion
@@ -123,13 +124,16 @@
           div
           {
               span{
-                  padding-left: 8px;
-                  cursor: pointer;
+                padding-left: 3px;
+                cursor: pointer;
+                padding-right: 15px;
+                margin-left: 5px;
               }
           span:focus
           {
-              background-color: #14635f;
-              color:#fff;              
+              background-color: #eaeaea;
+              color:#515151;
+              outline: none;              
           }
         }
       }
@@ -141,8 +145,8 @@
           }
           button[type=button]
             {
-            background-color: #14635f;
-            color: #fff;      
+            background-color: #eaeaea;
+            color: #515151;      
             border:1px solid #cccc;        
             height: 30px;
             width: 105px;

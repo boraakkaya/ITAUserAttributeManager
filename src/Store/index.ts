@@ -20,5 +20,7 @@ const reducers = combineReducers({
   itaTermStore:itaTermStore 
 });
 //const store =  createStore(reducers,composeWithDevTools({serialize:undefined})(applyMiddleware(thunkMiddleware,loggerMiddleware)));
-const store =  createStore(reducers,{},composeEnhancers(applyMiddleware(thunkMiddleware,loggerMiddleware)));
+const store =  createStore(reducers,{},composeEnhancers(applyMiddleware(thunkMiddleware
+  //,loggerMiddleware
+)));
 export default store;
