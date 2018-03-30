@@ -19,7 +19,7 @@ export const mockUsers: IUserProfile[] = [
         employeeType: EmployeeTypes.Intern,
         accountExpiration: "06/15/2018",
         countrySpecialities: ["France", "Germany", "Brazil", "Peru"],
-        industrySpecialities: ["Food Processing & Packaging", "Industrial Equipment & Supplies", "Textiles, Apparel & Sporting Goods"],
+        industrySpecialities: ["Livestock"],
         CSATCompletion: new Date("02/05/2018"),
         emergencyContactInformation: [{ firstName: "Jane", lastName: "Doe", emailAddress: "jane.doe@gmail.com", phoneNumber: "555-444-3322" }, { firstName: "Berry", lastName: "Stone", emailAddress: "berry.stone@hotmail.com", phoneNumber: "888-777-4466" }],
         education: [{ schoolName: "Harvard University", degree: "MBA", year: "2002" }, { schoolName: "Yale University", degree: "Bachelors", year: "2010" }],
@@ -44,7 +44,7 @@ export const mockUsers: IUserProfile[] = [
         employeeType: EmployeeTypes.RegularEmployee, //mngr
         accountExpiration: "05/20/2019", //mngr
         countrySpecialities: ["Italy", "Spain", "Portugal", "Greece"], //user
-        industrySpecialities: ["Agribusiness", "Architecture & Engineering", "Health Technologies"], //user
+        industrySpecialities: ["Livestock"], //user
         CSATCompletion: new Date("01/01/2018"), //only show both user and mngr read-only
         emergencyContactInformation: [{ firstName: "Demi", lastName: "Dorotyh", emailAddress: "demi.dorothy@gmail.com", phoneNumber: "111-222-3344" }, { firstName: "Brian", lastName: "McCarty", emailAddress: "brian.mccarty@hotmail.com", phoneNumber: "666-111-3388" }], //user update and visible to manager only
         education: [{ schoolName: "UCLA", degree: "Bachelors", year: "1998" }], //user 

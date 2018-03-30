@@ -17,31 +17,47 @@ import { Button, autobind } from 'office-ui-fabric-react';
 import CustomFieldArray3 from './FabricUI/CustomFieldArray3';
 import { IWebPartContext } from '@microsoft/sp-webpart-base';
 import {HttpClient,HttpClientConfiguration} from '@microsoft/sp-http';
-import { isfetching, updateUserProfileAsync } from '../Actions';
+import { isfetching, updateUserProfileAsync, getChildTerms } from '../Actions';
 import Modal from 'office-ui-fabric-react/lib/Modal';
 import { ITerms } from '../Interfaces/ITermStore';
+import { TaxonomyPicker } from './TaxonomyPicker';
 
 interface UserFormProps {
     currentTab:string;
     loggedInUser:IUserProfile;
     isfetching:boolean;
     initialize:(IUserProfile)=>{};    
-    itaTermStore:ITerms
+    itaTermStore:ITerms,
+    industryTerms:ITerms,
+    change:any
     
 };
 interface UserFormState {
     ModalResponseStatus:{active:boolean, message:string};
+    userIndustries:Array<ITerms>
 };
 class UserForm extends React.Component<UserFormProps, UserFormState> {    
     constructor(props)
     {        
         super(props);        
-        this.state={ModalResponseStatus:{active:false,message:""}};
+        this.state={ModalResponseStatus:{active:false,message:""}, userIndustries:[]};
     }
+
     componentWillMount()
     {
         this.props.initialize(this.props.loggedInUser);
+        var userIndustryArray = [];
+        this.props.industryTerms.Terms.map((term,index)=>{
+            console.log("TermName: ",term.Name);
+            this.props.loggedInUser.industrySpecialities.map((specialty,i)=>{
+                console.log("User Industry ", specialty);
+                userIndustryArray = userIndustryArray.concat(getChildTerms(specialty,term,[]));
+                console.log("Now is ", userIndustryArray);
+            });            
+        });                        
+        this.setState({userIndustries:userIndustryArray});
     }
+
     public render(): JSX.Element {  
              
         return (<div className={styles.forms}>
@@ -107,7 +123,24 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                 <div className={styles.formsection}>
                     <h1>Industry Specialities</h1>
                     <div>
-                    <FieldArray name="industrySpecialities" component={CustomFieldArray3}  props={{title:"Industry Specialities"}}/>
+                    {/* <FieldArray name="industrySpecialities" component={CustomFieldArray3}  props={{title:"Industry Specialities"}}/> */}
+                    <Field name="industrySpecialities" component={TaxonomyPicker} props={{errorMessage:"Required",required:true, defaultSelectedTerms : this.state.userIndustries,termSource:this.props.industryTerms,allowMultipleSelection:true, onSelect:(terms:Array<ITerms>)=>{
+                        if(terms != undefined && terms.length > 0)
+                        {
+                            var selectedTerms = [];
+                            terms.map((term,index)=>{
+                                selectedTerms.push(term.Name);
+                            });
+                            this.props.change("industrySpecialities",selectedTerms);
+                            this.setState({userIndustries:terms});
+                        }
+                        else
+                        {
+                           console.log("No Term selected");
+                           this.props.change("industrySpecialities","");
+                           this.setState({userIndustries:[]});
+                        }                        
+                    }}}  />
                     </div>
                 </div>
 
@@ -176,7 +209,8 @@ const mapStateToProps = (state, ownProps) => {
         currentTab:state.currentTab,
         loggedInUser:state.loggedInUser,
         isfetching:state.isfetching,
-        itaTermStore : state.itaTermStore
+        itaTermStore : state.itaTermStore,
+        industryTerms : state.itaTermStore.ITATermGroupList[0].TermSets[1]
     }
 }
 export default reduxForm({

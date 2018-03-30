@@ -214,7 +214,6 @@ export class TaxonomyTextBox extends React.Component<TaxonomyTextBoxProps, Taxon
             this.setState({suggestedTerms:undefined});
         }
     }
-
     @autobind
     public getMatchingChildTerms(val:string,term:ISuggestedTerms, result:Array<ISuggestedTerms>,location)
     {
@@ -244,14 +243,11 @@ export class TaxonomyTextBox extends React.Component<TaxonomyTextBoxProps, Taxon
         this.props.onUpdateSelectedItems(reducedArray);
     }
 }
-
-
 export interface SuggestionsProps {
     suggestions:Array<ISuggestedTerms>;
     onSelect: (e:ITerms)=>any;
 };
 export interface SuggestionsState {};
-
 export class Suggestions extends React.Component<SuggestionsProps, SuggestionsState> {
     public render(): JSX.Element {
         return (<div className={styles.suggestions}>
@@ -259,7 +255,6 @@ export class Suggestions extends React.Component<SuggestionsProps, SuggestionsSt
                 return <div className={styles.suggestion} onClick={()=>{this.props.onSelect(term)}}>
                     <div className={styles.suggestionheading}>{term.Name}</div>
                     <div className={styles.suggestionlocation}>{term.location}</div>
-
                 </div>
             })}
             </div>);

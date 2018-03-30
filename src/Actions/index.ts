@@ -5,7 +5,7 @@ import store from '../Store';
 import { IWebPartContext } from '@microsoft/sp-webpart-base';
 import { HttpClient } from '@microsoft/sp-http';
 import { ITAMockTermStore } from '../Data/MockTaxonomy';
-import { IITATermStore } from '../Interfaces/ITermStore';
+import { IITATermStore, ITerms } from '../Interfaces/ITermStore';
 const mockedLoggedInUser = mockUsers[1];
 export function getLoggedInUser()
 {
@@ -59,6 +59,23 @@ async function getTermStoreAsync():Promise<IITATermStore>
         })
     return result;
 }
+
+export function getChildTerms(val:string,term:ITerms, result:Array<ITerms>)
+{        
+    if(term.Name.toLowerCase()==val.toLowerCase())
+    {            
+        result.push(term);
+    }
+    if(term.Terms != undefined && term.Terms.length > 0)
+    {
+        (term.Terms as Array<ITerms>).map((a,index)=>{
+            getChildTerms(val,a,result);
+        })
+    }
+    return result;
+}
+
+
 //To Do get User Profiles using Graph API
 async function getLoggedInUserAsync():Promise<IUserProfile>
 {    

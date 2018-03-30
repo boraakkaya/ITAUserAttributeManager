@@ -8,7 +8,7 @@ import { IUserProfile } from '../Interfaces/IUserProfile';
 import FetchBox from './FetchBox';
 import UserDetail from './UserDetail';
 import { ITAPeoplePicker, ITAPersonaProps } from './ITAPeoplePicker';
-import { getSelectedUser, emptySelectedUser, isfetching, updateUserProfileAsync } from '../Actions';
+import { getSelectedUser, emptySelectedUser, isfetching, updateUserProfileAsync, getChildTerms } from '../Actions';
 import Modal from 'office-ui-fabric-react/lib/Modal';
 import store from '../Store';
 import CustomDatePicker from './FabricUI/CustomDatePicker';
@@ -68,9 +68,8 @@ console.log("PickerDefault is : ",this.pickerDefault);
     }
 
     @autobind
-    public getChildTerms(val:string,term:ITerms, result:Array<ITerms>)
-    {
-        console.log("Value passd : ",val, " -  ResultSet : ", result);
+    public getChildTermsx(val:string,term:ITerms, result:Array<ITerms>)
+    {        
         if(term.Name.toLowerCase()==val.toLowerCase())
         {            
             result.push(term);
@@ -78,7 +77,7 @@ console.log("PickerDefault is : ",this.pickerDefault);
         if(term.Terms != undefined && term.Terms.length > 0)
         {
             (term.Terms as Array<ITerms>).map((a,index)=>{
-                this.getChildTerms(val,a,result);
+                this.getChildTermsx(val,a,result);
             })
         }
         return result;
@@ -121,7 +120,7 @@ console.log("PickerDefault is : ",this.pickerDefault);
                         var userDepartment = [];
                         this.props.departmentTerms.Terms.map((term,index)=>{
                             console.log("YYYYYYYYY", userDepartment);
-                            userDepartment = userDepartment.concat(this.getChildTerms(this.props.selectedUser.taxonomyDepartment,term,[]));
+                            userDepartment = userDepartment.concat(getChildTerms(this.props.selectedUser.taxonomyDepartment,term,[]));
                         });                        
                         this.setState({userDepartment:userDepartment});
                         await this.getOfficeLocation(userDepartment[0].Id).then((location)=>{
@@ -370,8 +369,8 @@ console.log("PickerDefault is : ",this.pickerDefault);
             //
             var userDepartment:Array<ITerms> = [];
             this.props.departmentTerms.Terms.map((term,index)=>{
-            console.log("ZZZZZZZZZ", userDepartment);
-            userDepartment = userDepartment.concat(this.getChildTerms(this.props.selectedUser.taxonomyDepartment,term,[]));
+            
+            userDepartment = userDepartment.concat(getChildTerms(this.props.selectedUser.taxonomyDepartment,term,[]));
             });                        
             this.setState({userDepartment:userDepartment});
             await this.getOfficeLocation(userDepartment[0].Id).then((location)=>{
