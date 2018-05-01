@@ -17,7 +17,7 @@ import { Button, autobind } from 'office-ui-fabric-react';
 import CustomFieldArray3 from './FabricUI/CustomFieldArray3';
 import { IWebPartContext } from '@microsoft/sp-webpart-base';
 import {HttpClient,HttpClientConfiguration} from '@microsoft/sp-http';
-import { isfetching, updateUserProfileAsync, getChildTerms } from '../Actions';
+import { isfetching, updateUserProfileAsync, getChildTerms, getLoggedInUser } from '../Actions';
 import Modal from 'office-ui-fabric-react/lib/Modal';
 import { ITerms } from '../Interfaces/ITermStore';
 import { TaxonomyPicker } from './TaxonomyPicker';
@@ -47,12 +47,9 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
     {
         this.props.initialize(this.props.loggedInUser);
         var userIndustryArray = [];
-        this.props.industryTerms.Terms.map((term,index)=>{
-            console.log("TermName: ",term.Name);
-            this.props.loggedInUser.industrySpecialities.map((specialty,i)=>{
-                console.log("User Industry ", specialty);
-                userIndustryArray = userIndustryArray.concat(getChildTerms(specialty,term,[]));
-                console.log("Now is ", userIndustryArray);
+        this.props.industryTerms.Terms.map((term,index)=>{            
+            this.props.loggedInUser.industrySpecialities.map((specialty,i)=>{                
+                userIndustryArray = userIndustryArray.concat(getChildTerms(specialty,term,[]));                
             });            
         });                        
         this.setState({userIndustries:userIndustryArray});
@@ -135,8 +132,7 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
                             this.setState({userIndustries:terms});
                         }
                         else
-                        {
-                           console.log("No Term selected");
+                        {                           
                            this.props.change("industrySpecialities","");
                            this.setState({userIndustries:[]});
                         }                        
@@ -176,17 +172,34 @@ class UserForm extends React.Component<UserFormProps, UserFormState> {
         // sample account i:0#.f|membership|bora@itadev.onmicrosoft.com
         var ctx:IWebPartContext = (window as any).spfxContext;
         ctx.httpClient.get('https://itauserprofilemanager.azurewebsites.net/api/GetUserProfile?account=i%3A0%23.f%7Cmembership%7Cbora%40itadev.onmicrosoft.com',HttpClient.configurations.v1,{}).then((response)=>{
-            //console.log("Response is ", response);
             response.json().then((result)=>{
                 console.log("Result is ", result);
             })
         })
     }
     @autobind
+    async reInitializeFormAfterUpdate()
+    {
+        console.log("Reinitializing.....");
+        await store.dispatch(getLoggedInUser()).then(()=>
+        {
+            this.props.initialize(this.props.loggedInUser);
+            console.log("Initialized");
+            var userIndustryArray = [];
+            this.props.industryTerms.Terms.map((term,index)=>{            
+            this.props.loggedInUser.industrySpecialities.map((specialty,i)=>
+            {
+                userIndustryArray = userIndustryArray.concat(getChildTerms(specialty,term,[]));                
+            });            
+            });                        
+            this.setState({userIndustries:userIndustryArray});
+            console.log("Now state is ", this.state);
+        })
+    }
+    @autobind
     _closeModalResponseStatus()
     {
-        this.setState({ModalResponseStatus:{active:false,message:""}});
-
+        this.setState({ModalResponseStatus:{active:false,message:""}},()=>{this.reInitializeFormAfterUpdate();});
     }
     @autobind
     updateUserProfile(userEmail)
